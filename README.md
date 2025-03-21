@@ -22,23 +22,11 @@ Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sana
 
 ## Valmistilanne
 
-| Ominaisuus                  | Tila             |
-|----------------------------|------------------|
-| Piirrettävän sanan haku    | Keskeneräinen    |
-| Piirtokomponentti          | Keskeneräinen    |
-| Arvausmekaniikka           | Keskeneräinen    |
-| Moninpeli / Yhteys         | Ei aloitettu     |
-| Käyttöliittymän viimeistely| Ei aloitettu     |
-
 ## Tulevat ominaisuudet (Roadmap)
 
 ## Kehittäjät
 
-- Nimi tähän
-
-## Idean tausta
-
 ## Lisenssi
 
-## Ota yhteyttä
+
 
