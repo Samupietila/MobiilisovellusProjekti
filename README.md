@@ -28,6 +28,8 @@ Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sana
 
 [![jukiss](https://github.com/jukkiss.png)](https://github.com/jukkiss)
 [![samupietila](https://github.com/samupietila.png)](https://github.com/samupietila)
+<img src="https://github.com/jukkiss.png" width="50" height="50">
+<img src="https://github.com/samupietila.png" width="50" height="50">
 [![mikagronroos2](https://github.com/mikagronroos2.png)](https://github.com/mikagronroos2)
 [![samupietila](https://github.com/annikannisto.png)](https://github.com/annikannisto)
 ## Lisenssi
