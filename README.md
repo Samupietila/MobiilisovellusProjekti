@@ -26,13 +26,13 @@ Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sana
 
 ## Kehittäjät
 <img src="https://github.com/jukkiss.png" width="50" height="50">
-[![Jukka Savela]](https://github.com/jukkiss)
+[@jukkiss](https://github.com/jukkiss)
 <img src="https://github.com/samupietila.png" width="50" height="50">
-[![Samu Pietilä]](https://github.com/samupietila)
+[@samupietila](https://github.com/samupietila)
 <img src="https://github.com/mikagronroos2.png" width="50" height="50">
-[![Mika Grönroos]](https://github.com/mikagronroos2)
+[@mikagronroos2](https://github.com/mikagronroos2)
 <img src="https://github.com/annikannisto.png" width="50" height="50">
-[![Anni Kannisto]](https://github.com/annikannisto)
+[@annikannisto](https://github.com/annikannisto)
 ## Lisenssi
 
 
