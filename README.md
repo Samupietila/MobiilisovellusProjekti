@@ -22,8 +22,6 @@ Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sana
 
 ## Valmistilanne
 
-## Tulevat ominaisuudet (Roadmap)
-
 ## Kehittäjät
 
 [![jukiss](https://github.com/jukkiss.png)](https://github.com/jukkiss)
