@@ -12,7 +12,7 @@ import com.example.mobiilisovellusprojekti.screens.screens.History
 import com.example.mobiilisovellusprojekti.screens.screens.Home
 import com.example.mobiilisovellusprojekti.screens.screens.NewProfile
 import com.example.mobiilisovellusprojekti.screens.screens.Player
-import com.example.mobiilisovellusprojekti.screens.screens.Statistics
+import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
 
 enum class NavigationScreens(val title: String) {
     BTCONNECT("BTConnect"),
@@ -22,7 +22,7 @@ enum class NavigationScreens(val title: String) {
     HISTORY("History"),
     NEWPROFILE("NewProfile"),
     PLAYER("Player"),
-    STATISTICS("Statistics")
+    STATISTICS("GameStatistics")
 }
 
 
@@ -42,7 +42,7 @@ fun Navigation() {
         composable(NavigationScreens.HISTORY.title) { navController.navigate(History()) }
         composable(NavigationScreens.NEWPROFILE.title) { navController.navigate(NewProfile()) }
         composable(NavigationScreens.PLAYER.title) { navController.navigate(Player()) }
-        composable(NavigationScreens.STATISTICS.title) { navController.navigate(Statistics()) }
+        composable(NavigationScreens.STATISTICS.title) { navController.navigate(GameStatistics()) }
 
     }
 }
