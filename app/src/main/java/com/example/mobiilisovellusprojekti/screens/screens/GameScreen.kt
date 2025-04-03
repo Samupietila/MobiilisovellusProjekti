@@ -1,8 +1,10 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.compose.ui.Modifier
 
 @Composable
-fun GameScreen() {
+fun GameScreen(navController: NavController, modifier: Modifier) {
 
 }

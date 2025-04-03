@@ -13,6 +13,7 @@ import com.example.mobiilisovellusprojekti.screens.screens.Home
 import com.example.mobiilisovellusprojekti.screens.screens.NewProfile
 import com.example.mobiilisovellusprojekti.screens.screens.Player
 import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
+import androidx.compose.ui.Modifier
 
 enum class NavigationScreens(val title: String) {
     BTCONNECT("BTConnect"),
@@ -28,21 +29,21 @@ enum class NavigationScreens(val title: String) {
 
 // IMPLEMENTOI BACKSTACK JA SEN KÄYTTÖLIITTYMÄ???
 @Composable
-fun Navigation() {
+fun Navigation(modifier: Modifier) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Home()
+        startDestination = Home(navController, modifier)
         ) {
-        composable(NavigationScreens.BTCONNECT.title) { navController.navigate(BTConnect()) }
-        composable(NavigationScreens.CONTACTS.title) { navController.navigate(Contacts()) }
-        composable(NavigationScreens.DRAWSCREEN.title) { navController.navigate(DrawScreen()) }
-        composable(NavigationScreens.GAMESCREEN.title) { navController.navigate(GameScreen()) }
-        composable(NavigationScreens.HISTORY.title) { navController.navigate(History()) }
-        composable(NavigationScreens.NEWPROFILE.title) { navController.navigate(NewProfile()) }
-        composable(NavigationScreens.PLAYER.title) { navController.navigate(Player()) }
-        composable(NavigationScreens.STATISTICS.title) { navController.navigate(GameStatistics()) }
+        composable(NavigationScreens.BTCONNECT.title) { navController.navigate(BTConnect(navController, modifier)) }
+        composable(NavigationScreens.CONTACTS.title) { navController.navigate(Contacts(navController, modifier)) }
+        composable(NavigationScreens.DRAWSCREEN.title) { navController.navigate(DrawScreen(navController, modifier)) }
+        composable(NavigationScreens.GAMESCREEN.title) { navController.navigate(GameScreen(navController, modifier)) }
+        composable(NavigationScreens.HISTORY.title) { navController.navigate(History(navController, modifier)) }
+        composable(NavigationScreens.NEWPROFILE.title) { navController.navigate(NewProfile(navController, modifier)) }
+        composable(NavigationScreens.PLAYER.title) { navController.navigate(Player(navController, modifier)) }
+        composable(NavigationScreens.STATISTICS.title) { navController.navigate(GameStatistics(navController, modifier)) }
 
     }
 }
