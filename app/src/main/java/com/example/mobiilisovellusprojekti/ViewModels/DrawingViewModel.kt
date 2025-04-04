@@ -20,6 +20,7 @@ val allColors = listOf(
     Color.Yellow,
     Color.Green,
     Color.White,
+    // Pyyhekumi
 )
 
 data class PathData(
