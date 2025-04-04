@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        DrawScreen()
+                        DrawScreen(navController: NavController, modifier: Modifier)
                     }
                 }
             }
