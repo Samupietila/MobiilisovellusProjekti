@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.allColors
+import com.example.mobiilisovellusprojekti.screens.navigation.Navigation
 import com.example.mobiilisovellusprojekti.screens.screens.CanvasControls
 import com.example.mobiilisovellusprojekti.screens.screens.DrawScreen
 import com.example.mobiilisovellusprojekti.screens.screens.DrawingCanvas
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        DrawScreen(navController: NavController, modifier: Modifier)
+                        Navigation(modifier = Modifier)
                     }
                 }
             }
