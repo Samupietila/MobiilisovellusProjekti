@@ -22,9 +22,10 @@ import com.example.mobiilisovellusprojekti.R
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
+import androidx.navigation.NavController
 
 @Composable
-fun Home() {
+fun Home(navController: NavController, modifier: Modifier) {
     var isDarkTheme by remember { mutableStateOf(false) }
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
@@ -117,5 +118,5 @@ fun Home() {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    Home()
+    Home(navController: NavController, modifier: Modifier)
 }

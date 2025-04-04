@@ -1,9 +1,11 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 
-//Updated name
+
 @Composable
-fun GameStatistics() {
+fun GameStatistics(navController: NavController, modifier: Modifier) {
 
 }
