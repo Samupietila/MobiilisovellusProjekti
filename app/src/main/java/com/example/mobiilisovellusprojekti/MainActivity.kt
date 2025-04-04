@@ -21,6 +21,7 @@ import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.allColors
 import com.example.mobiilisovellusprojekti.screens.screens.CanvasControls
+import com.example.mobiilisovellusprojekti.screens.screens.DrawScreen
 import com.example.mobiilisovellusprojekti.screens.screens.DrawingCanvas
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 
@@ -31,34 +32,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobiilisovellusProjektiTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val viewModel = viewModel<DrawingViewModel>()
-                    val state by viewModel.state.collectAsStateWithLifecycle()
-
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        DrawingCanvas(
-                            paths = state.paths,
-                            currentPath = state.currentPath,
-                            onAction = viewModel::onAction,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .weight(1f)
-                        )
-                        CanvasControls(
-                            selectedColor = state.selectedColor,
-                            colors = allColors,
-                            onSelectColor = {
-                                viewModel.onAction(DrawingAction.OnSelectColor(it))
-                            },
-                            onClearCanvas = {
-                                viewModel.onAction((DrawingAction.OnClearCanvasClick))
-                            },
-
-                        )
+                        DrawScreen()
                     }
                 }
             }
