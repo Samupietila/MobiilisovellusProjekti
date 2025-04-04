@@ -23,6 +23,7 @@ import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun Home(navController: NavController, modifier: Modifier) {
@@ -118,5 +119,6 @@ fun Home(navController: NavController, modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    Home(navController: NavController, modifier: Modifier)
+    val navController = rememberNavController()
+    Home(navController = navController, modifier = Modifier)
 }

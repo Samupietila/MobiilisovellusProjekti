@@ -14,8 +14,10 @@ import com.example.mobiilisovellusprojekti.screens.screens.NewProfile
 import com.example.mobiilisovellusprojekti.screens.screens.Player
 import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
 import androidx.compose.ui.Modifier
+import com.example.mobiilisovellusprojekti.screens.screens.Test
 
 enum class NavigationScreens(val title: String) {
+    HOME("Home"),
     BTCONNECT("BTConnect"),
     CONTACTS("Contacts"),
     DRAWSCREEN("DrawScreen"),
@@ -23,7 +25,8 @@ enum class NavigationScreens(val title: String) {
     HISTORY("History"),
     NEWPROFILE("NewProfile"),
     PLAYER("Player"),
-    STATISTICS("GameStatistics")
+    STATISTICS("GameStatistics"),
+    TEST("Test")
 }
 
 
@@ -34,16 +37,17 @@ fun Navigation(modifier: Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = Home(navController, modifier)
-        ) {
-        composable(NavigationScreens.BTCONNECT.title) { navController.navigate(BTConnect(navController, modifier)) }
-        composable(NavigationScreens.CONTACTS.title) { navController.navigate(Contacts(navController, modifier)) }
-        composable(NavigationScreens.DRAWSCREEN.title) { navController.navigate(DrawScreen(navController, modifier)) }
-        composable(NavigationScreens.GAMESCREEN.title) { navController.navigate(GameScreen(navController, modifier)) }
-        composable(NavigationScreens.HISTORY.title) { navController.navigate(History(navController, modifier)) }
-        composable(NavigationScreens.NEWPROFILE.title) { navController.navigate(NewProfile(navController, modifier)) }
-        composable(NavigationScreens.PLAYER.title) { navController.navigate(Player(navController, modifier)) }
-        composable(NavigationScreens.STATISTICS.title) { navController.navigate(GameStatistics(navController, modifier)) }
-
+        startDestination = NavigationScreens.TEST.title
+    ) {
+        composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier) }
+        composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
+        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
+        composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier) }
+        composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
+        composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }
+        composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
+        composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
+        composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
     }
 }
