@@ -19,12 +19,9 @@ import no.nordicsemi.android.kotlin.ble.core.ServerDevice
 import no.nordicsemi.android.kotlin.ble.scanner.BleScanner
 import no.nordicsemi.android.kotlin.ble.scanner.aggregator.BleScanResultAggregator
 
-
-
 class BleViewModel : ViewModel() {
     val scanResults = MutableLiveData<List<ServerDevice>>(emptyList())
     val isScanning = MutableLiveData(false)
-    private val _devices = MutableLiveData<List<ServerDevice>>(emptyList())
 
     fun scanDevices(context: Context) {
         val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -43,7 +40,6 @@ class BleViewModel : ViewModel() {
             BleScanner(context).scan()
                 .map { aggregator.aggregateDevices(it) }
                 .onEach { devices ->
-                    _devices.value = devices
                     scanResults.value = devices
                     isScanning.value = false
                 }

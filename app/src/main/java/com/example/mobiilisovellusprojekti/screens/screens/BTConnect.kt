@@ -24,9 +24,8 @@ import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 
 @Composable
 fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel) {
-    val context = LocalContext.current
-    val blueToothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
+    val context = LocalContext.current
     val devices by bleViewModel.scanResults.observeAsState(emptyList())
     val isScanning by bleViewModel.isScanning.observeAsState(false)
 
