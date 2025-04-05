@@ -1,7 +1,6 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
-import android.bluetooth.BluetoothManager
-import android.content.Context
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,6 @@ import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel

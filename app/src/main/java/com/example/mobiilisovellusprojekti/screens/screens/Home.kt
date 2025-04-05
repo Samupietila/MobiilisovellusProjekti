@@ -24,6 +24,7 @@ import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 
 @Composable
 fun Home(navController: NavController, modifier: Modifier) {
@@ -80,7 +81,7 @@ fun Home(navController: NavController, modifier: Modifier) {
 
                 // Painikkeet
                 Button(
-                    onClick = { /* Toiminto tähän */ },
+                    onClick = { navController.navigate(NavigationScreens.BTCONNECT.title) },
                     colors = primaryButtonColors(),
                     modifier = Modifier.width(250.dp)
                 ) {
