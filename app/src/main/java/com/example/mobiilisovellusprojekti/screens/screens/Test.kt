@@ -1,21 +1,27 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 
 @Composable
 fun Test(navController: NavController, modifier: Modifier) {
-    Column {
-        Button(onClick = {
+  
+    Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+      
+         Button(onClick = {
             navController.navigate(NavigationScreens.WORD.title)
-        }) {
+        }
+               ) {
             Text("Go to Word Screen")
         }
+      
         Button(onClick = {
             navController.navigate(NavigationScreens.HOME.title)
         }, modifier = Modifier) {
