@@ -14,6 +14,7 @@ import com.example.mobiilisovellusprojekti.screens.screens.NewProfile
 import com.example.mobiilisovellusprojekti.screens.screens.Player
 import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
 import androidx.compose.ui.Modifier
+import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.screens.screens.Test
 
 enum class NavigationScreens(val title: String) {
@@ -32,7 +33,7 @@ enum class NavigationScreens(val title: String) {
 
 // IMPLEMENTOI BACKSTACK JA SEN KÄYTTÖLIITTYMÄ???
 @Composable
-fun Navigation(modifier: Modifier) {
+fun Navigation(modifier: Modifier, bleViewModel: BleViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -40,7 +41,7 @@ fun Navigation(modifier: Modifier) {
         startDestination = NavigationScreens.TEST.title
     ) {
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier) }
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
         composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier) }
