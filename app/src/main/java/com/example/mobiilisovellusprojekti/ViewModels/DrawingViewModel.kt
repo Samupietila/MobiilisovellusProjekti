@@ -7,20 +7,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class  DrawingState(
-    val selectedColor: Color = Color.Black,
-    val currentPath: PathData? = null,
-    val paths: List<PathData> = emptyList()
+data class DrawingColor(
+    val color: Color,
+    val isEraser: Boolean = false
 )
 
 val allColors = listOf(
-    Color.Black,
-    Color.Red,
-    Color.Blue,
-    Color.Yellow,
-    Color.Green,
-    Color.White,
-    // Pyyhekumi
+    DrawingColor(Color.Black),
+    DrawingColor(Color.Red),
+    DrawingColor(Color.Blue),
+    DrawingColor(Color.Yellow),
+    DrawingColor(Color.Green),
+    DrawingColor(Color.White, isEraser = true)
+)
+
+data class DrawingState(
+    val selectedColor: DrawingColor = allColors.first(),
+    val currentPath: PathData? = null,
+    val paths: List<PathData> = emptyList()
 )
 
 data class PathData(
@@ -30,14 +34,14 @@ data class PathData(
 )
 
 sealed interface DrawingAction {
-    data object OnNewPathStart: DrawingAction
-    data class OnDraw(val offset: Offset): DrawingAction
-    data object OnPathEnd: DrawingAction
-    data class OnSelectColor(val color: Color): DrawingAction
-    data object OnClearCanvasClick: DrawingAction
+    data object OnNewPathStart : DrawingAction
+    data class OnDraw(val offset: Offset) : DrawingAction
+    data object OnPathEnd : DrawingAction
+    data class OnSelectColor(val color: DrawingColor) : DrawingAction
+    data object OnClearCanvasClick : DrawingAction
 }
 
-class DrawingViewModel: ViewModel() {
+class DrawingViewModel : ViewModel() {
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
@@ -53,43 +57,45 @@ class DrawingViewModel: ViewModel() {
 
     private fun onClearCanvas() {
         _state.update {
-            it.copy(
-                currentPath = null,
-                paths = emptyList()
-            )
+            it.copy(currentPath = null, paths = emptyList())
         }
     }
 
-    private fun onSelectColor(color: Color) {
-        _state.update { it.copy(
-            selectedColor = color
-        ) }
+    private fun onSelectColor(color: DrawingColor) {
+        _state.update { it.copy(selectedColor = color) }
     }
 
     private fun onDraw(offset: Offset) {
         val currentPath = state.value.currentPath ?: return
-        _state.update { it.copy(
-            currentPath = currentPath.copy(
-                path = currentPath.path + offset
+        _state.update {
+            it.copy(
+                currentPath = currentPath.copy(
+                    path = currentPath.path + offset
+                )
             )
-        ) }
+        }
     }
 
     private fun onNewPathStart() {
-        _state.update { it.copy(
-            currentPath = PathData(
-                id = System.currentTimeMillis().toString(),
-                color = it.selectedColor,
-                path = emptyList()
+        val currentColor = state.value.selectedColor
+        _state.update {
+            it.copy(
+                currentPath = PathData(
+                    id = System.currentTimeMillis().toString(),
+                    color = currentColor.color,
+                    path = emptyList()
+                )
             )
-        ) }
+        }
     }
 
     private fun onPathEnd() {
         val currentPathData = state.value.currentPath ?: return
-        _state.update { it.copy(
-            currentPath = null,
-            paths = it.paths + currentPathData
-        ) }
+        _state.update {
+            it.copy(
+                currentPath = null,
+                paths = it.paths + currentPathData
+            )
+        }
     }
 }
