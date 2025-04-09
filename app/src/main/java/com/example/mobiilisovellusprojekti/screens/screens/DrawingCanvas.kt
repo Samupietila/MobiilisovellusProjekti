@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.util.fastForEach
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
-
 import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import kotlin.math.abs
 
@@ -33,18 +32,10 @@ fun DrawingCanvas(
             .background(Color.White)
             .pointerInput(true) {
                 detectDragGestures(
-                    onDragStart = {
-                        onAction(DrawingAction.OnNewPathStart)
-                    },
-                    onDragEnd = {
-                        onAction(DrawingAction.OnPathEnd)
-                    },
-                    onDrag = { change, _ ->
-                        onAction(DrawingAction.OnDraw(change.position))
-                    },
-                    onDragCancel = {
-                        onAction(DrawingAction.OnPathEnd)
-                    }
+                    onDragStart = { onAction(DrawingAction.OnNewPathStart) },
+                    onDragEnd = { onAction(DrawingAction.OnPathEnd) },
+                    onDrag = { change, _ -> onAction(DrawingAction.OnDraw(change.position)) },
+                    onDragCancel = { onAction(DrawingAction.OnPathEnd) }
                 )
             }
     ) {
@@ -65,9 +56,9 @@ fun DrawingCanvas(
 
 private fun DrawScope.drawPath(
     path: List<Offset>,
-    color: Color,
-    thickness: Float = 10f
+    color: Color
 ) {
+    val thickness = if (color == Color.White) 60f else 15f
     val smoothedPath = Path().apply {
         if (path.isNotEmpty()) {
             moveTo(path.first().x, path.first().y)
@@ -80,8 +71,8 @@ private fun DrawScope.drawPath(
                 if (dx >= smoothness || dy >= smoothness) {
                     quadraticTo(
                         x1 = (from.x + to.x) / 2f,
-                        y1 = (from.y + to.y)  / 2f,
-                        x2 =  to.x,
+                        y1 = (from.y + to.y) / 2f,
+                        x2 = to.x,
                         y2 = to.y
                     )
                 }

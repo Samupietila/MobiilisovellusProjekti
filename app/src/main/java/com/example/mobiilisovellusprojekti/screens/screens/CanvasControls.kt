@@ -1,15 +1,12 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -19,53 +16,98 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingColor
+import com.example.mobiilisovellusprojekti.R
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.remember
+import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
+
 
 @Composable
 fun ColumnScope.CanvasControls(
-    selectedColor: Color,
-    colors: List<Color>,
-    onSelectColor: (Color) -> Unit,
+    selectedColor: DrawingColor,
+    colors: List<DrawingColor>,
+    onSelectColor: (DrawingColor) -> Unit,
     onClearCanvas: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .background(MaterialTheme.colorScheme.background),
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
     ) {
-        colors.fastForEach { color ->
-            val isSelected = selectedColor == color
+        colors.fastForEach { drawingColor ->
+            val isSelected = selectedColor == drawingColor
+
             Box(
                 modifier = Modifier
-                    .graphicsLayer {
-                        val scale = if(isSelected) 1.2f else 1f
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(color)
-                    .border(
-                        width = 2.dp,
-                        color = if(selectedColor == color) {
-                            Color.Black
-                        } else {
-                            Color.Transparent
-                        },
-                        shape =  CircleShape
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onSelectColor(drawingColor) },
+                contentAlignment = Alignment.Center
+            ) {
+                DrawingColorItem(drawingColor, isSelected)
+
+                if (drawingColor.isEraser) {
+                    Image(
+                        painter = painterResource(id = R.drawable.eraser),
+                        contentDescription = "Eraser",
+                        modifier = Modifier.size(24.dp)
                     )
-                    .clickable {
-                        onSelectColor(color)
-                    }
-            )
+                }
+            }
         }
     }
+
     Button(
-        onClick = onClearCanvas
+        onClick = onClearCanvas,
+        modifier = Modifier
+            .padding(11.dp)
+            .navigationBarsPadding(),
+        colors = secondaryButtonColors()
     ) {
         Text("Clear Canvas")
     }
 }
+
+    @Composable
+    fun DrawingColorItem(
+        drawingColor: DrawingColor,
+        isSelected: Boolean
+    ) {
+        val isDarkTheme = isSystemInDarkTheme()
+
+        val borderColor = if (isSelected) {
+            if (isDarkTheme) Color.White else Color.Black
+        } else {
+            Color.Transparent
+        }
+
+        val backgroundColor = if (drawingColor.isEraser) {
+            MaterialTheme.colorScheme.background
+        } else {
+            drawingColor.color
+        }
+
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(backgroundColor)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = CircleShape
+                )
+                .size(40.dp)
+        )
+    }
+
+
+
