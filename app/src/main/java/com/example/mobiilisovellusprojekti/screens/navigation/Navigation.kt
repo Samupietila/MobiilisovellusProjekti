@@ -49,7 +49,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel) {
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
-        composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier) }
+        composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier, bleViewModel) }
         composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
         composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
