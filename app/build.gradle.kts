@@ -42,10 +42,19 @@ android {
 
 dependencies {
 
+
     
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
+
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.test:core:1.5.0")
 
     // Bluetooth Kotlin-BLE
     implementation(libs.scanner)
