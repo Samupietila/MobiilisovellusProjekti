@@ -44,7 +44,7 @@ fun GuessScreen(
 
             Box(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1.5f)
                     .fillMaxWidth()
                     .background(Color.White)
             ) {
@@ -58,10 +58,9 @@ fun GuessScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
             LazyColumn(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.6f)
                     .fillMaxWidth()
                     .background(colors.surface)
                     .padding(8.dp),
@@ -86,6 +85,7 @@ fun GuessScreen(
                     }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
