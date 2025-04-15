@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.screens.screens.Test
 import com.example.mobiilisovellusprojekti.screens.screens.WordScreen
+import com.example.mobiilisovellusprojekti.screens.screens.GuessScreen
+
 
 
 enum class NavigationScreens(val title: String) {
@@ -30,7 +32,9 @@ enum class NavigationScreens(val title: String) {
     PLAYER("Player"),
     STATISTICS("GameStatistics"),
     TEST("Test"),
-    WORD("Word")
+    WORD("Word"),
+    GUESS("Guess")
+
 }
 
 
@@ -55,5 +59,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel) {
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
         composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
         composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
+        composable(NavigationScreens.GUESS.title) { GuessScreen(modifier) }
+
     }
 }
