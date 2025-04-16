@@ -51,7 +51,11 @@ data class AdvertisingState(
 class ChatBleServer(
     private val context: Context,
     private val coroutineScope: CoroutineScope
-    ) {
+) {
+
+    private val _connectedDevices = mutableListOf<ServerConnectionEvent.DeviceConnected>()
+    val connectedDevices: List<ServerConnectionEvent.DeviceConnected>
+        get() = _connectedDevices
 
     private val _state = MutableStateFlow(AdvertisingState(isAdvertising = false))
     val state: StateFlow<AdvertisingState> = _state
@@ -102,10 +106,28 @@ class ChatBleServer(
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
             Log.d("ChatBleServer", "Received message: $message")
+
+
         }?.launchIn(viewModelScope)
     }
 
-    fun sendData(message: String, bleViewModel: BleViewModel, viewModelScope: CoroutineScope) {
+
+    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, onDeviceConnected: () -> Unit) {
+        server.connectionEvents
+            .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
+            .map { it.connection }
+            .onEach { connection ->
+                _connectedDevices.add(ServerConnectionEvent.DeviceConnected(connection))
+                connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
+                    setUpServices(service, viewModelScope)
+
+                    // Notify the devices that connection has been established
+                    onDeviceConnected()
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun startAdvertising() {
         val requiredPermissions =
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                 arrayOf(
@@ -121,94 +143,41 @@ class ChatBleServer(
         }
 
         if (missingPermissions.isNotEmpty()) {
-            Log.e("ChatBleServer", "Missing required Bluetooth permissions: $missingPermissions")
+            Log.e(
+                "ChatBleServer",
+                "Missing required Bluetooth permissions: $missingPermissions"
+            )
             return
         }
 
-        val characteristic = bleViewModel.connectionCharasteristic
-        if (characteristic != null) {
-            val messageBytes = message.toByteArray(Charsets.UTF_8)
-            val dataByteArray = DataByteArray(messageBytes)
+        try {
+            Log.d("ChatBleServer", "Starting Advertiser")
+            coroutineScope.launch {
+                advertiser.advertise(advertiserConfig)
+                    .cancellable()
+                    .catch { it.printStackTrace() }
+                    .collect {
+                        when (it) {
+                            is OnAdvertisingSetStarted -> {
+                                _state.value = _state.value.copy(isAdvertising = true)
+                                Log.d("ChatBleServer", "Advertising started")
+                            }
 
-            viewModelScope.launch {
-                try {
-                    characteristic.write(dataByteArray)
-                    Log.d("BleViewModel", "Message sent: $message")
-                } catch (e: Exception) {
-                    Log.e("BleViewModel", "Failed to send message: ${e.message}")
-                }
-            }
-        } else {
-            Log.e("BleViewModel", "No characteristic available to send message")
-        }
-    }
+                            is OnAdvertisingSetStopped -> {
+                                _state.value = _state.value.copy(isAdvertising = false)
+                                Log.d("ChatBleServer", "Advertising stopped")
+                            }
 
-
-    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, onDeviceConnected: () -> Unit) {
-        server.connectionEvents
-            .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
-            .map { it.connection }
-            .onEach { connection ->
-                connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
-                    setUpServices(service, viewModelScope)
-
-                    // Notify the devices that connection has been established
-                    onDeviceConnected()
-                }
-            }.launchIn(viewModelScope)
-    }
-
-        fun startAdvertising() {
-            val requiredPermissions =
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                    arrayOf(
-                        android.Manifest.permission.BLUETOOTH_ADVERTISE,
-                        android.Manifest.permission.BLUETOOTH_CONNECT
-                    )
-                } else {
-                    arrayOf(android.Manifest.permission.BLUETOOTH)
-                }
-
-            val missingPermissions = requiredPermissions.filter {
-                ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
-            }
-
-            if (missingPermissions.isNotEmpty()) {
-                Log.e(
-                    "ChatBleServer",
-                    "Missing required Bluetooth permissions: $missingPermissions"
-                )
-                return
-            }
-
-            try {
-                Log.d("ChatBleServer", "Starting Advertiser")
-                coroutineScope.launch {
-                    advertiser.advertise(advertiserConfig)
-                        .cancellable()
-                        .catch { it.printStackTrace() }
-                        .collect {
-                            when (it) {
-                                is OnAdvertisingSetStarted -> {
-                                    _state.value = _state.value.copy(isAdvertising = true)
-                                    Log.d("ChatBleServer", "Advertising started")
-                                }
-
-                                is OnAdvertisingSetStopped -> {
-                                    _state.value = _state.value.copy(isAdvertising = false)
-                                    Log.d("ChatBleServer", "Advertising stopped")
-                                }
-
-                                else -> {
-                                    Log.w("ChatBleServer", "Unhandled advertising event: $it")
-                                }
+                            else -> {
+                                Log.w("ChatBleServer", "Unhandled advertising event: $it")
                             }
                         }
-                }
-            } catch (e: SecurityException) {
-                Log.e("ChatBleServer", "SecurityException: ${e.message}")
+                    }
             }
+        } catch (e: SecurityException) {
+            Log.e("ChatBleServer", "SecurityException: ${e.message}")
         }
+    }
 
     fun startServer(context: Context, viewModelScope: CoroutineScope, onDeviceConnected: () -> Unit) {
         declareServer(context, viewModelScope) { server ->
@@ -216,9 +185,38 @@ class ChatBleServer(
         }
     }
 
+    fun sendData(message: String, viewModelScope: CoroutineScope) {
+        val connectedDevices = _connectedDevices // List of connected devices
+        if (connectedDevices.isEmpty()) {
+            Log.e("ChatBleServer", "No connected devices to send data to")
+            return
+        }
 
+        viewModelScope.launch {
+            try {
+                connectedDevices.forEach { device ->
+                    val service = device.connection.services.findService(BleViewModel.SERVICE_UUID)
+                    val characteristic = service?.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
+                    if (characteristic != null) {
+
+                        Log.d("SendData message: ", message)
+
+                        val data = DataByteArray(message.toByteArray())
+
+                        characteristic.setValueAndNotifyClient(data)
+                        Log.d("ChatBleServer", "Message sent to device: ${device.connection.device.address}")
+                    } else {
+                        Log.e("ChatBleServer", "Characteristic not found for device: ${device.connection.device.address}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ChatBleServer", "Failed to send data: ${e.message}")
+            }
+        }
     }
+
+}
 
 
 class BleClient() {
@@ -247,6 +245,8 @@ class BleViewModel : ViewModel() {
     fun initializeChatBleServer(context: Context) {
         chatBleServer = ChatBleServer(context, viewModelScope)
     }
+
+
 
     //  To save the connection for later
     private var _connection: ClientBleGatt? = null
@@ -320,6 +320,8 @@ class BleViewModel : ViewModel() {
             val connection = ClientBleGatt.connect(context, device.address, viewModelScope)
             val services = connection.discoverServices()
 
+            connection.requestMtu(512)
+
             val service = services.findService(BleViewModel.SERVICE_UUID)
             if (service == null) {
                 Log.e("ConnectToDevice", "service was not found")
@@ -368,13 +370,35 @@ class BleViewModel : ViewModel() {
         }
     }
 
+
+    // Ei toimi??
     fun sendMessageToClient(message: String) {
         if (::chatBleServer.isInitialized) {
-            chatBleServer.sendData(message, this, viewModelScope)
+            chatBleServer.sendData(message, viewModelScope)
         } else {
             Log.e("BleViewModel", "ChatBleServer is not initialized")
         }
     }
+
+    fun sendMessageToServer(message: String) {
+        val characteristic = connectionCharasteristic
+        if (characteristic != null) {
+            viewModelScope.launch {
+                try {
+
+                    val data = DataByteArray(message.toString().toByteArray())
+                    characteristic.write(data)
+                    Log.d("BleViewModel", "Message sent to server: $message")
+                } catch (e: Exception) {
+                    Log.e("BleViewModel", "Failed to send message: ${e.message}")
+                }
+            }
+        } else {
+            Log.e("BleViewModel", "Characteristic not found for sending data")
+        }
+    }
+
+
 
 
 

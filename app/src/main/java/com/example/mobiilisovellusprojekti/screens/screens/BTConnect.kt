@@ -30,6 +30,8 @@ import kotlin.toString
 fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel) {
 
     val context = LocalContext.current
+
+
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val activity = context as Activity
@@ -98,14 +100,20 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
-                            .clickable{
+                            .clickable {
+                                Log.d("Clicked me!!!","Hello!?")
                                 coroutineScope.launch {
-                                    println("Clicked on ${result}")
-                                    Log.d("Test", result.toString())
-                                    if (bleViewModel.connectToDevice(context, result)) {
-                                        navController.navigate(NavigationScreens.GAMESCREEN.title)
+                                    try {
+                                        Log.d("Test", result.toString())
+                                        val isConnected = bleViewModel.connectToDevice(context, result)
+                                        if (isConnected) {
+                                            navController.navigate(NavigationScreens.GAMESCREEN.title)
+                                        } else {
+                                            Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
+                                        }
+                                    } catch (e: Exception) {
+                                        Log.e("BTConnect", "Error during connection: ${e.message}")
                                     }
-
                                 }
                             },
                         colors = CardDefaults.cardColors(

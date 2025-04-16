@@ -72,7 +72,34 @@ fun GameScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Send")
+            Text("Send to Client")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                if (!isSending) {
+                    isSending = true // Set the flag to true before starting the coroutine
+                    bleViewModel.viewModelScope.launch {
+                        try {
+                            bleViewModel.sendMessageToServer(textInput) // Pass the textInput to the function
+                            textInput = "" // Clear the input field after sending
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        } finally {
+                            isSending = false // Reset the flag after sending
+                        }
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Send to Server")
+        }
+
+
+
+
     }
 }
