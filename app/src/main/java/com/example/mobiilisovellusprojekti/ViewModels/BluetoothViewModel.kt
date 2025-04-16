@@ -50,7 +50,8 @@ data class AdvertisingState(
 
 class ChatBleServer(
     private val context: Context,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    chatViewModel: ChatViewModel
 ) {
 
     private val _connectedDevices = mutableListOf<ServerConnectionEvent.DeviceConnected>()
@@ -100,26 +101,27 @@ class ChatBleServer(
 
 
     // SET UP THE DATA HERE
-    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope) {
+    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel) {
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
             Log.d("ChatBleServer", "Received message: $message")
+            chatViewModel.addMessage(message, isSentByUser = false)
 
 
         }?.launchIn(viewModelScope)
     }
 
 
-    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, onDeviceConnected: () -> Unit) {
+    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
         server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
             .map { it.connection }
             .onEach { connection ->
                 _connectedDevices.add(ServerConnectionEvent.DeviceConnected(connection))
                 connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
-                    setUpServices(service, viewModelScope)
+                    setUpServices(service, viewModelScope, chatViewModel)
 
                     // Notify the devices that connection has been established
                     onDeviceConnected()
@@ -179,9 +181,9 @@ class ChatBleServer(
         }
     }
 
-    fun startServer(context: Context, viewModelScope: CoroutineScope, onDeviceConnected: () -> Unit) {
+    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
         declareServer(context, viewModelScope) { server ->
-            observeConnections(server, viewModelScope, onDeviceConnected)
+            observeConnections(server, viewModelScope, chatViewModel,onDeviceConnected)
         }
     }
 
@@ -242,8 +244,8 @@ class BleViewModel : ViewModel() {
     // To enable Host
     private lateinit var chatBleServer: ChatBleServer
 
-    fun initializeChatBleServer(context: Context) {
-        chatBleServer = ChatBleServer(context, viewModelScope)
+    fun initializeChatBleServer(context: Context, chatViewModel: ChatViewModel) {
+        chatBleServer = ChatBleServer(context, viewModelScope, chatViewModel)
     }
 
 
@@ -270,9 +272,9 @@ class BleViewModel : ViewModel() {
     val isAdvertising = MutableLiveData(false)
     val connectionState = MutableLiveData<String>()
 
-    fun startAdvertising(context: Context, onDeviceConnected: () -> Unit) {
+    fun startAdvertising(context: Context, chatViewModel: ChatViewModel ,onDeviceConnected: () -> Unit) {
         if (::chatBleServer.isInitialized) {
-            chatBleServer.startServer(context, viewModelScope, onDeviceConnected)
+            chatBleServer.startServer(context, viewModelScope, chatViewModel,onDeviceConnected)
             isAdvertising.value = true
             chatBleServer.startAdvertising()
         } else {
@@ -343,7 +345,7 @@ class BleViewModel : ViewModel() {
         return true
     }
 
-    fun observeNotifications(context: Context) {
+    fun observeNotifications(context: Context, chatViewModel: ChatViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             if (!hasBluetoothPermissions(context)) {
@@ -358,6 +360,7 @@ class BleViewModel : ViewModel() {
                             Log.d("BleViewModel", "Notification received: $message")
 
                             // Handle the received message here
+                            chatViewModel.addMessage(message, isSentByUser = false)
 
                         }
                         .launchIn(this)
@@ -372,15 +375,16 @@ class BleViewModel : ViewModel() {
 
 
     // Ei toimi??
-    fun sendMessageToClient(message: String) {
+    fun sendMessageToClient(message: String, chatViewModel: ChatViewModel) {
         if (::chatBleServer.isInitialized) {
+            chatViewModel.addMessage(message, isSentByUser = true)
             chatBleServer.sendData(message, viewModelScope)
         } else {
             Log.e("BleViewModel", "ChatBleServer is not initialized")
         }
     }
 
-    fun sendMessageToServer(message: String) {
+    fun sendMessageToServer(message: String, chatViewModel: ChatViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             viewModelScope.launch {
@@ -389,6 +393,7 @@ class BleViewModel : ViewModel() {
                     val data = DataByteArray(message.toString().toByteArray())
                     characteristic.write(data)
                     Log.d("BleViewModel", "Message sent to server: $message")
+                    chatViewModel.addMessage(message, isSentByUser = true)
                 } catch (e: Exception) {
                     Log.e("BleViewModel", "Failed to send message: ${e.message}")
                 }

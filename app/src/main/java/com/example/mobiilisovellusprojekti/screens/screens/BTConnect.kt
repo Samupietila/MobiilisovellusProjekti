@@ -21,13 +21,14 @@ import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 import kotlinx.coroutines.launch
 import kotlin.text.compareTo
 import kotlin.toString
 
 @Composable
-fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel) {
+fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
 
     val context = LocalContext.current
 
@@ -39,7 +40,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                 requestPermissions(activity)
             }
         }
-        bleViewModel.initializeChatBleServer(context)
+        bleViewModel.initializeChatBleServer(context, chatViewModel)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -67,7 +68,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
 
             // Aloita Advertising
             Button(
-                onClick = { bleViewModel.startAdvertising(context) {
+                onClick = { bleViewModel.startAdvertising(context, chatViewModel) {
                     navController.navigate(NavigationScreens.GAMESCREEN.title)
                 } },
                 enabled = !isScanning,
