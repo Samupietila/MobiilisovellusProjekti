@@ -50,7 +50,10 @@ class DrawingViewModel : ViewModel() {
             DrawingAction.OnClearCanvasClick -> onClearCanvas()
             is DrawingAction.OnDraw -> onDraw(action.offset)
             DrawingAction.OnNewPathStart -> onNewPathStart()
-            DrawingAction.OnPathEnd -> onPathEnd()
+            DrawingAction.OnPathEnd -> {
+                onPathEnd()
+                // tähän send coordinates to server?
+            }
             is DrawingAction.OnSelectColor -> onSelectColor(action.color)
         }
     }
