@@ -170,7 +170,7 @@ fun WordScreen(
                     modifier = Modifier.fillMaxWidth(),
                     colors = secondaryButtonColors()
                 ) {
-                    Text(text = if (isDarkTheme) "Switch to light theme" else "Switch to dark theme")
+                    Text(text = if (isDarkTheme) "Switch to light" else "Switch to dark")
                 }
             }
         }
