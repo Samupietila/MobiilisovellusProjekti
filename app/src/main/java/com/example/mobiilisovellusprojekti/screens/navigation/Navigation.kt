@@ -15,6 +15,7 @@ import com.example.mobiilisovellusprojekti.screens.screens.Player
 import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
 import androidx.compose.ui.Modifier
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.screens.screens.Test
 import com.example.mobiilisovellusprojekti.screens.screens.WordScreen
 import com.example.mobiilisovellusprojekti.screens.screens.GuessScreen
@@ -40,7 +41,7 @@ enum class NavigationScreens(val title: String) {
 
 // IMPLEMENTOI BACKSTACK JA SEN KÄYTTÖLIITTYMÄ???
 @Composable
-fun Navigation(modifier: Modifier, bleViewModel: BleViewModel) {
+fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -50,10 +51,10 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel) {
       
         composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel) }
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
-        composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier) }
+        composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
         composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
