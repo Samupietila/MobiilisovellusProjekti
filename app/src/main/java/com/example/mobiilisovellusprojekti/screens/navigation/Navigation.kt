@@ -35,7 +35,6 @@ enum class NavigationScreens(val title: String) {
     TEST("Test"),
     WORD("Word"),
     GUESS("Guess")
-
 }
 
 
