@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val DarkColorPalette = darkColorScheme(
-    primary = Color(0xFF7AC5D0),
+    primary = Color(0xFFE6EEEF),
     secondary = Color(0xFF636FC2),
     tertiary = Color(0xFFE37676),
     background = Color(0xFF000000),
