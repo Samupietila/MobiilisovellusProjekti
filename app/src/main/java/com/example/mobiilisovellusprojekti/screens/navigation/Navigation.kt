@@ -18,8 +18,6 @@ import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.screens.screens.Test
 import com.example.mobiilisovellusprojekti.screens.screens.WordScreen
-import com.example.mobiilisovellusprojekti.screens.screens.GuessScreen
-
 
 
 enum class NavigationScreens(val title: String) {
@@ -33,8 +31,7 @@ enum class NavigationScreens(val title: String) {
     PLAYER("Player"),
     STATISTICS("GameStatistics"),
     TEST("Test"),
-    WORD("Word"),
-    GUESS("Guess")
+    WORD("Word")
 }
 
 
@@ -47,7 +44,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         navController = navController,
         startDestination = NavigationScreens.TEST.title
     ) {
-      
+
         composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel) }
@@ -59,7 +56,5 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
         composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
         composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
-        composable(NavigationScreens.GUESS.title) { GuessScreen(modifier) }
-
     }
 }

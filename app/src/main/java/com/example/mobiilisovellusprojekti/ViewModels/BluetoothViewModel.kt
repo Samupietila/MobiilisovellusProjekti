@@ -1,6 +1,8 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.AdvertiseData
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.ParcelUuid
@@ -30,7 +32,6 @@ import no.nordicsemi.android.kotlin.ble.client.main.service.ClientBleGattCharact
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingConfig
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingData
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingSettings
-import no.nordicsemi.android.kotlin.ble.core.advertiser.ManufacturerData
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
 import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
@@ -56,8 +57,6 @@ class ChatBleServer(
     chatViewModel: ChatViewModel
 ) {
 
-
-    // List of connections connected to the server
     private val _connectedDevices = mutableListOf<ServerConnectionEvent.DeviceConnected>()
     val connectedDevices: List<ServerConnectionEvent.DeviceConnected>
         get() = _connectedDevices
@@ -65,23 +64,18 @@ class ChatBleServer(
     private val _state = MutableStateFlow(AdvertisingState(isAdvertising = false))
     val state: StateFlow<AdvertisingState> = _state
 
-
-    // Creating advertiser object
     private val advertiser = BleAdvertiser.create(context)
     val advertiserConfig = BleAdvertisingConfig(
         settings = BleAdvertisingSettings(
-            deviceName = "Guess my doodle",
-            anonymous = false,
+            deviceName = "Doodle"
         ),
         advertiseData = BleAdvertisingData(
-            serviceUuid = ParcelUuid(BleViewModel.GAME_UUID),
-            includeDeviceName = true,
-            manufacturerData = listOf(
-                ManufacturerData(
-                    id = 69,
-                    data = DataByteArray("Hello Samu".toByteArray())
-                )
-            )
+            ParcelUuid(BleViewModel.GAME_UUID),
+            includeDeviceName = true
+        ),
+        scanResponseData = BleAdvertisingData(
+            ParcelUuid(BleViewModel.GAME_UUID),
+            includeDeviceName = true
         )
     )
 
@@ -91,27 +85,23 @@ class ChatBleServer(
         onServerCreated: (ServerBleGatt) -> Unit
     ) {
         viewModelScope.launch {
-
-            // Define the servers charasteristic configuration on what will be used
             val serverCharasteristics = ServerBleGattCharacteristicConfig(
-                BleViewModel.CHARACTERISTIC_UUID, // UUID for the charasteristic
+                BleViewModel.CHARACTERISTIC_UUID,
                 listOf(
                     BleGattProperty.PROPERTY_READ,
                     BleGattProperty.PROPERTY_WRITE,
                     BleGattProperty.PROPERTY_NOTIFY),
                 listOf(
                     BleGattPermission.PERMISSION_READ,
-                    BleGattPermission.PERMISSION_WRITE) // What kind of permissions are given for the user connected to the server
+                    BleGattPermission.PERMISSION_WRITE)
             )
 
-            // Defining server's configuration
             val serverConfig = ServerBleGattServiceConfig(
                 BleViewModel.SERVICE_UUID,
                 ServerBleGattServiceType.SERVICE_TYPE_PRIMARY,
                 listOf(serverCharasteristics)
             )
 
-            // Creating the actual server
             val server = ServerBleGatt.create(context, this, serverConfig)
             onServerCreated(server)
         }
@@ -120,11 +110,8 @@ class ChatBleServer(
 
     // SET UP THE DATA HERE
     fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel) {
-
-        // Define the charasteristic whose data will be defined
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
-        // Lambda on what will happen when the charasteristic gest written
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
             Log.d("ChatBleServer", "Received message: $message")
@@ -135,7 +122,6 @@ class ChatBleServer(
     }
 
 
-    // When a connection is established what will happen is defined in this function
     fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
         server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
@@ -145,13 +131,12 @@ class ChatBleServer(
                 connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
                     setUpServices(service, viewModelScope, chatViewModel)
 
-                    // Notify the devices that connection has been established. In this case move into the next screen
+                    // Notify the devices that connection has been established
                     onDeviceConnected()
                 }
             }.launchIn(viewModelScope)
     }
 
-    // Starting the advertisement of the server
     fun startAdvertising() {
         val requiredPermissions =
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -186,6 +171,9 @@ class ChatBleServer(
                             is OnAdvertisingSetStarted -> {
                                 _state.value = _state.value.copy(isAdvertising = true)
                                 Log.d("ChatBleServer", "Advertising started")
+                                Log.d("DBG!","${advertiser}")
+                                Log.d("DBG!","$connectedDevices")
+                                Log.d("DBG!","${advertiserConfig.advertiseData}")
                             }
 
                             is OnAdvertisingSetStopped -> {
@@ -210,7 +198,6 @@ class ChatBleServer(
         }
     }
 
-    // Function to send data and notify the clients that are connected to the server
     fun sendData(message: String, viewModelScope: CoroutineScope) {
         val connectedDevices = _connectedDevices // List of connected devices
         if (connectedDevices.isEmpty()) {
@@ -333,8 +320,6 @@ class BleViewModel : ViewModel() {
                 .map { aggregator.aggregateDevices(it) }
                 .onEach {
                     scanResults.value = it
-                    Log.d("onEach", "${it.toString()}")
-                    it.forEach { }
                     isScanning.value = false
                 }
                 .launchIn(viewModelScope)
@@ -429,6 +414,25 @@ class BleViewModel : ViewModel() {
         }
     }
 
+    fun sendCoordinatesToServer( drawingState: DrawingState, drawingViewModel: DrawingViewModel) {
+        val characteristic = connectionCharasteristic
+        val coordinates = drawingState.paths
+        if (characteristic != null) {
+            viewModelScope.launch {
+                try {
+                    coordinates.forEach { coordinate ->
+                        val data = DataByteArray(coordinate.toString().toByteArray())
+                        characteristic.write(data)
+                        Log.d("sendCoordinatesToServer", "Coordinate $coordinate sent to server")
+
+                    }
+                } catch (e: Exception) {
+                    Log.e("sendCoordinatesToServer", "Failed to send coordinates to server")
+                    Log.e("sendCoordinatesToServer", "${e.message}")
+                }
+            }
+        }
+    }
 
 
 
