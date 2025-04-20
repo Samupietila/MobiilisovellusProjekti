@@ -75,5 +75,10 @@ fun Test(navController: NavController, modifier: Modifier) {
         }, modifier = Modifier) {
             Text("Go to Statistics")
         }
+        Button(onClick = {
+            //navController.navigate(NavigationScreens.GUESS.title)
+        }, modifier = Modifier) {
+            Text("Go to GUESS")
+        }
     }
 }

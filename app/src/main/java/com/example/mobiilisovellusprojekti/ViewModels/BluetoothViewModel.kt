@@ -32,6 +32,7 @@ import no.nordicsemi.android.kotlin.ble.client.main.service.ClientBleGattCharact
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingConfig
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingData
 import no.nordicsemi.android.kotlin.ble.core.advertiser.BleAdvertisingSettings
+import no.nordicsemi.android.kotlin.ble.core.advertiser.ManufacturerData
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
 import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
@@ -67,15 +68,12 @@ class ChatBleServer(
     private val advertiser = BleAdvertiser.create(context)
     val advertiserConfig = BleAdvertisingConfig(
         settings = BleAdvertisingSettings(
-            deviceName = "Doodle"
+            deviceName = "Doodle",
+            anonymous = false,
         ),
         advertiseData = BleAdvertisingData(
-            ParcelUuid(BleViewModel.GAME_UUID),
-            includeDeviceName = true
-        ),
-        scanResponseData = BleAdvertisingData(
-            ParcelUuid(BleViewModel.GAME_UUID),
-            includeDeviceName = true
+            serviceUuid = ParcelUuid(BleViewModel.GAME_UUID),
+            includeDeviceName = true,
         )
     )
 
@@ -171,6 +169,7 @@ class ChatBleServer(
                             is OnAdvertisingSetStarted -> {
                                 _state.value = _state.value.copy(isAdvertising = true)
                                 Log.d("ChatBleServer", "Advertising started")
+                                Log.d("ChatBleServer", "Advertising with UUID: ${BleViewModel.GAME_UUID}")
                                 Log.d("DBG!","${advertiser}")
                                 Log.d("DBG!","$connectedDevices")
                                 Log.d("DBG!","${advertiserConfig.advertiseData}")
@@ -316,7 +315,7 @@ class BleViewModel : ViewModel() {
                 serviceUuid = serviceUuid
             )
 
-            BleScanner(context).scan(listOf(scanFilter))
+            BleScanner(context).scan(listOf())
                 .map { aggregator.aggregateDevices(it) }
                 .onEach {
                     scanResults.value = it

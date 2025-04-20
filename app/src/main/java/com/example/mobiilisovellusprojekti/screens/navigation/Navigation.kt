@@ -45,7 +45,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         startDestination = NavigationScreens.TEST.title
     ) {
 
-        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
+       composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }

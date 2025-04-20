@@ -25,15 +25,16 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
             .padding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        /*
         DrawingCanvas(paths = state.paths,
             currentPath = state.currentPath,
             // onAction = viewModel::onAction,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-        ) { }
+        ) { }*/
 
-        /*
+
         DrawingCanvas(
             paths = state.paths,
             currentPath = state.currentPath,
@@ -52,6 +53,6 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
                 viewModel.onAction((DrawingAction.OnClearCanvasClick))
             },
 
-            )*/
+            )
     }
 }

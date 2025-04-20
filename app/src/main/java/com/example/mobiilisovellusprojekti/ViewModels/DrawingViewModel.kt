@@ -1,5 +1,6 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
@@ -100,5 +101,7 @@ class DrawingViewModel : ViewModel() {
                 paths = it.paths + currentPathData
             )
         }
+        Log.d("DBG","${_state.value.paths}")
+        Log.d("DBG","${_state.value.paths.size}")
     }
 }
