@@ -1,12 +1,17 @@
 package com.example.mobiilisovellusprojekti
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,6 +29,10 @@ class MainActivity : ComponentActivity() {
     private val bleViewModel: BleViewModel by viewModels()
     private val chatViewModel: ChatViewModel by viewModels()
 
+    companion object {
+        private const val REQUEST_ENABLE_BT = 1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,12 +41,29 @@ class MainActivity : ComponentActivity() {
             requestPermissions(this)
         }
 
+        checkAndEnableBluetooth()
+
         setContent {
             MobiilisovellusProjektiTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Navigation(modifier = Modifier.padding(innerPadding), bleViewModel, chatViewModel)
                 }
             }
+        }
+    }
+
+    private fun checkAndEnableBluetooth() {
+        val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            // Device does not support Bluetooth
+            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!bluetoothAdapter.isEnabled) {
+            // Prompt the user to enable Bluetooth
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
     }
 

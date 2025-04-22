@@ -65,6 +65,18 @@ class ChatBleServer(
     private val _state = MutableStateFlow(AdvertisingState(isAdvertising = false))
     val state: StateFlow<AdvertisingState> = _state
 
+    val data = "This is a long message that needs to be truncated"
+    val truncatedData = if (data.toByteArray().size > 31) {
+        data.toByteArray().copyOf(31) // Limit to 31 bytes
+    } else {
+        data.toByteArray()
+    }
+
+    val advertiseData = BleAdvertisingData(
+        serviceUuid = ParcelUuid(BleViewModel.GAME_UUID),
+        includeDeviceName = false,
+    )
+
 
     // Creating advertiser object
     private val advertiser = BleAdvertiser.create(context)
@@ -73,17 +85,10 @@ class ChatBleServer(
             deviceName = "Guess my doodle",
             anonymous = false,
         ),
-        advertiseData = BleAdvertisingData(
-            serviceUuid = ParcelUuid(BleViewModel.GAME_UUID),
-            includeDeviceName = true,
-            manufacturerData = listOf(
-                ManufacturerData(
-                    id = 69,
-                    data = DataByteArray("Hello Samu".toByteArray())
-                )
-            )
-        )
+        advertiseData = advertiseData,
     )
+
+
 
     fun declareServer(
         context: Context,
@@ -160,7 +165,10 @@ class ChatBleServer(
                     android.Manifest.permission.BLUETOOTH_CONNECT
                 )
             } else {
-                arrayOf(android.Manifest.permission.BLUETOOTH)
+                arrayOf(
+                    android.Manifest.permission.BLUETOOTH,
+                    android.Manifest.permission.BLUETOOTH_ADMIN,
+                )
             }
 
         val missingPermissions = requiredPermissions.filter {
