@@ -78,7 +78,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                 colors = primaryButtonColors(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (advertisingState.isAdvertising) "Advertising" else "Advertise", style = MaterialTheme.typography.bodyLarge)
+                Text(if (advertisingState.isAdvertising == true) "Advertising" else "Advertise", style = MaterialTheme.typography.bodyLarge)
             }
             Spacer(modifier = Modifier.height(16.dp))
 

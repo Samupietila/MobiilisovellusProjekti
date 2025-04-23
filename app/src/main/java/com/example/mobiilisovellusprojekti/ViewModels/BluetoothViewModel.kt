@@ -5,8 +5,11 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.AdvertiseData
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.ParcelUuid
+import android.provider.ContactsContract
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -140,7 +143,9 @@ class ChatBleServer(
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                 arrayOf(
                     android.Manifest.permission.BLUETOOTH_ADVERTISE,
-                    android.Manifest.permission.BLUETOOTH_CONNECT
+                    android.Manifest.permission.BLUETOOTH_CONNECT,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.BLUETOOTH_ADMIN
                 )
             } else {
                 arrayOf(android.Manifest.permission.BLUETOOTH)
@@ -155,9 +160,14 @@ class ChatBleServer(
                 "ChatBleServer",
                 "Missing required Bluetooth permissions: $missingPermissions"
             )
-            return
+        } else {
+            // Oikeudet ovat kunnossa, aloita mainostaminen
+            startAdvertisingProcess()
         }
 
+        }
+
+    private fun startAdvertisingProcess(){
         try {
             Log.d("ChatBleServer", "Starting Advertiser")
             coroutineScope.launch {
@@ -169,7 +179,9 @@ class ChatBleServer(
                             is OnAdvertisingSetStarted -> {
                                 _state.value = _state.value.copy(isAdvertising = true)
                                 Log.d("ChatBleServer", "Advertising started")
-                                Log.d("ChatBleServer", "Advertising with UUID: ${BleViewModel.GAME_UUID}")
+                                Log.d("DBG", "${Build.VERSION.SDK_INT} & ${Build.VERSION_CODES.S}")
+                                Log.d("DBG!", "AdvertiseData serviceUuid: ${advertiserConfig.advertiseData?.serviceUuid}")
+                                Log.d("DBG", "Advertising with UUID: ${BleViewModel.GAME_UUID}")
                                 Log.d("DBG!","${advertiser}")
                                 Log.d("DBG!","$connectedDevices")
                                 Log.d("DBG!","${advertiserConfig.advertiseData}")
@@ -266,9 +278,9 @@ class BleViewModel : ViewModel() {
         get() = _connection
 
     // To save the Charasteristic
-    private var _charasteristic: ClientBleGattCharacteristic? = null
+    private var _characteristic: ClientBleGattCharacteristic? = null
     val connectionCharasteristic: ClientBleGattCharacteristic?
-        get() = _charasteristic
+        get() = _characteristic
 
     val advertisingState: StateFlow<AdvertisingState>
         get() = if (::chatBleServer.isInitialized) {
@@ -286,6 +298,7 @@ class BleViewModel : ViewModel() {
         if (::chatBleServer.isInitialized) {
             chatBleServer.startServer(context, viewModelScope, chatViewModel,onDeviceConnected)
             isAdvertising.value = true
+            Log.d("DBG?","${isAdvertising.value}")
             chatBleServer.startAdvertising()
         } else {
             Log.e("BleViewModel", "ChatBleServer is not initialized")
@@ -314,12 +327,17 @@ class BleViewModel : ViewModel() {
             val scanFilter = no.nordicsemi.android.kotlin.ble.core.scanner.BleScanFilter(
                 serviceUuid = serviceUuid
             )
-
-            BleScanner(context).scan(listOf())
+            Log.d("DBG", "scanning for $scanFilter")
+            BleScanner(context).scan()
                 .map { aggregator.aggregateDevices(it) }
                 .onEach {
                     scanResults.value = it
                     isScanning.value = false
+                            it.forEach { device ->
+                                //val services = device.services.map { it.uuid.toString() }
+                                //Log.d("DBG", "Found device: ${device.name}, services: ${device.bondState}")
+                        }
+
                 }
                 .launchIn(viewModelScope)
         } else {
@@ -334,19 +352,19 @@ class BleViewModel : ViewModel() {
 
             connection.requestMtu(512)
 
-            val service = services.findService(BleViewModel.SERVICE_UUID)
+            val service = services.findService(SERVICE_UUID)
             if (service == null) {
                 Log.e("ConnectToDevice", "service was not found")
                 return false
             }
 
-            val charasteristic = service.findCharacteristic(CHARACTERISTIC_UUID)
-            if (charasteristic == null) {
-                Log.e("ConnectToDevice", "No charasteristic found")
+            val characteristic = service.findCharacteristic(CHARACTERISTIC_UUID)
+            if (characteristic == null) {
+                Log.e("ConnectToDevice", "No characteristic found")
                 return false
             }
             _connection = connection
-            _charasteristic = charasteristic
+            _characteristic = characteristic
             connectionState.postValue("Connected to ${device.name ?: "Unknown"}")
         } catch (e: Exception) {
             connectionState.postValue("Failed to connect to ${device.name ?: "Unknown"}: ${e.message}")
@@ -420,9 +438,11 @@ class BleViewModel : ViewModel() {
             viewModelScope.launch {
                 try {
                     coordinates.forEach { coordinate ->
-                        val data = DataByteArray(coordinate.toString().toByteArray())
+                        // serialisoidaan, en oo tehny mitää vastaanottamiseen
+                        val byteData = drawingViewModel.serializePathDataBinary(coordinate)
+                        val data = DataByteArray(byteData)
                         characteristic.write(data)
-                        Log.d("sendCoordinatesToServer", "Coordinate $coordinate sent to server")
+                        Log.d("sendCoordinatesToServer", "Coordinate ${coordinate.id} sent to server")
 
                     }
                 } catch (e: Exception) {

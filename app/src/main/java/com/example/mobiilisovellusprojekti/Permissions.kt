@@ -26,7 +26,8 @@ private val bluetoothPermissions: Array<String> = if (Build.VERSION.SDK_INT >= B
 } else {
     arrayOf(
         Manifest.permission.BLUETOOTH,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.BLUETOOTH_ADMIN
     )
 }
 
