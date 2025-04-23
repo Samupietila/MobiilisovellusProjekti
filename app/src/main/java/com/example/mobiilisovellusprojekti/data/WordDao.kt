@@ -13,4 +13,7 @@ interface WordDao {
 
     @Query("SELECT * FROM words")
     fun getAllFlow(): Flow<List<Word>>
+
+    @Query("SELECT * FROM words ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomWord(): Word?
 }

@@ -3,21 +3,27 @@ package com.example.mobiilisovellusprojekti.screens.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
-import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
-import com.example.mobiilisovellusprojekti.ViewModels.allColors
+import com.example.mobiilisovellusprojekti.ViewModels.*
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DrawScreen(navController: NavController, modifier: Modifier) {
-    val viewModel = viewModel<DrawingViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val drawingViewModel = viewModel<DrawingViewModel>()
+    val drawingState by drawingViewModel.state.collectAsStateWithLifecycle()
+
+    val wordViewModel = viewModel<WordViewModel>()
+    val word by wordViewModel.randomWord.collectAsState()
+
+    LaunchedEffect(Unit) {
+        wordViewModel.getRandomWord()
+    }
 
     Column(
         modifier = Modifier
@@ -25,26 +31,25 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
             .padding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Text(text = "Piirrä: ${word?.word ?: "Ladataan..."}")
 
         DrawingCanvas(
-            paths = state.paths,
-            currentPath = state.currentPath,
-            onAction = viewModel::onAction,
+            paths = drawingState.paths,
+            currentPath = drawingState.currentPath,
+            onAction = drawingViewModel::onAction,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
         )
         CanvasControls(
-            selectedColor = state.selectedColor,
+            selectedColor = drawingState.selectedColor,
             colors = allColors,
             onSelectColor = {
-                viewModel.onAction(DrawingAction.OnSelectColor(it))
+                drawingViewModel.onAction(DrawingAction.OnSelectColor(it))
             },
             onClearCanvas = {
-                viewModel.onAction((DrawingAction.OnClearCanvasClick))
+                drawingViewModel.onAction(DrawingAction.OnClearCanvasClick)
             },
-
-            )
+        )
     }
 }
