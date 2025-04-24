@@ -63,7 +63,7 @@
 ## Architecture
 
 The app follows the **MVVM (Model-View-ViewModel)** pattern to separate UI and logic.
-It uses **Jetpack Compose** for the UI, **Bluetooth (BLE)** for real-time device-to-device communication, and **ViewModel** for state management.
+It uses **Jetpack Compose** for the UI, **Bluetooth (Kotlin-BLE)** for real-time device-to-device communication, and **ViewModel** for state management.
 Asynchronous operations are handled using **Kotlin Coroutines**, and **Room** is used for local data storage.
 
 ## Testing
