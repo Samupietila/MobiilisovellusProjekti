@@ -13,17 +13,17 @@
 <details>
   <summary>Table of Contents</summary>
   
-1. [Features](#-features)
-2. [Technologies & Tools](#-technologies--tools)
-3. [Installation](#-installation)
-4. [Screenshots](#-screenshots)
-5. [Architecture](#-architecture)
-6. [Testing](#-testing)
-7. [Folder Structure](#-folder-structure)
-8. [Project Status](#-project-status)
-9. [Roadmap](#-roadmap)
-10. [Developers](#-developers)
-11. [License](#-license)
+1. [Features](#features)
+2. [Technologies & Tools](#technologies-tools)
+3. [Installation](#installation)
+4. [Screenshots](#screenshots)
+5. [Architecture](#architecture)
+6. [Testing](#testing)
+7. [Folder Structure](#folder-structure)
+8. [Project Status](#project-status)
+9. [Roadmap](#roadmap)
+10. [Developers](#developers)
+11. [License](#license)
 
 </details>
 
@@ -34,7 +34,6 @@
 </div>
 
 ## Features
-
 - Draw using the touchscreen
 - Random word generation
 - Bluetooth connection between two devices
