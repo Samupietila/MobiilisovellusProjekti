@@ -34,7 +34,7 @@
 
 ## 📸 Screenshots
 
-Coming soon...
+- Coming soon...
 
 
 ## 🏗️ Architecture
@@ -42,15 +42,16 @@ Coming soon...
 
 ## ✅ Testing
 
-Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
+- Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
 
 
 ## 📂 Folder Structure
+app/ ├── manifests/ │ └── AndroidManifest.xml ├── kotlin+java/ │ └── com.example.mobiilisovellusprojekti/ │ ├── data/ │ │ ├── Word.kt │ │ ├── WordDao.kt │ │ ├── WordDatabase.kt │ │ └── WordRepository.kt │ ├── screens/ │ │ ├── navigation/ │ │ └── screens/ │ ├── ui.theme/ │ │ ├── ButtonStyles.kt │ │ ├── Color.kt │ │ ├── Theme.kt │ │ └── Type.kt │ ├── ViewModels/ │ │ ├── BluetoothViewModel.kt │ │ ├── DrawingViewModel.kt │ │ └── WordViewModel.kt │ └── MainActivity.kt ├── test/ │ ├── WordDaoTest.kt │ ├── DrawingViewModelTest.kt │ └── ExampleUnitTest.kt ├── androidTest/ │ ├── ExampleInstrumentedTest.kt │ └── WordDaoTest.kt ├── res/ │ ├── drawable/ │ │ ├── eraser.png │ │ ├── logo.png │ │ ├── ic_launcher_background.xml │ │ └── ic_launcher_foreground.xml │ ├── mipmap/ │ ├── values/ │ └── xml/ ├── build.gradle.kts ├── proguard-rules.pro
 
 
 ## 🚧 Project Status
-MVP Completed
-Polish & Improvements in Progress
+- MVP Completed
+- Polish & Improvements in Progress
 
 ## 🛣️ Roadmap
 
