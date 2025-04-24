@@ -11,12 +11,12 @@
 
 ## 📱 Features
 
-- 🎨 Draw using the touchscreen
-- 🔄 Random word generation
-- 🔵 Bluetooth connection between two devices
-- 🧠 Word guessing logic
-- 🕹️ Real-time interaction
-- 🧼 Clean and responsive UI with Jetpack Compose
+- Draw using the touchscreen
+- Random word generation
+- Bluetooth connection between two devices
+- Word guessing logic
+- Real-time interaction
+- Clean and responsive UI with Jetpack Compose
 
 
 ## 🛠️ Technologies & Tools
@@ -24,7 +24,7 @@
 - **Kotlin** – Primary language
 - **Jetpack Compose** – Modern UI toolkit
 - **Android Studio** – Development environment
-- **Bluetooth API** – For peer-to-peer communication
+- **Kotlin-BLE** – For peer-to-peer communication
 
 
 ## ⚙️ Installation
