@@ -19,11 +19,10 @@
 4. [Screenshots](#screenshots)
 5. [Architecture](#architecture)
 6. [Testing](#testing)
-7. [Folder Structure](#folder-structure)
-8. [Project Status](#project-status)
-9. [Roadmap](#roadmap)
-10. [Developers](#developers)
-11. [License](#license)
+7. [Project Status](#project-status)
+8. [Roadmap](#roadmap)
+9. [Developers](#developers)
+10. [License](#license)
 
 </details>
 
