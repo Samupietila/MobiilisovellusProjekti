@@ -79,9 +79,20 @@
 
 ## 👨‍💻 Developers
 
-| [@jukkiss](https://github.com/jukkiss) | [@samupietila](https://github.com/samupietila) | [@mikagronroos2](https://github.com/mikagronroos2) | [@annikannisto](https://github.com/annikannisto) |
-|:--:|:--:|:--:|:--:|
-| <img src="https://github.com/jukkiss.png" width="70" height="70"> | <img src="https://github.com/samupietila.png" width="70" height="70"> | <img src="https://github.com/mikagronroos2.png" width="70" height="70"> | <img src="https://github.com/annikannisto.png" width="70" height="70"> |
+<div align="center">
+  <a href="https://github.com/jukkiss">
+    <img src="https://github.com/jukkiss.png" alt="@jukkiss" width="80" height="80" style="border-radius: 50%; margin: 10px;">
+  </a>
+  <a href="https://github.com/samupietila">
+    <img src="https://github.com/samupietila.png" alt="@samupietila" width="80" height="80" style="border-radius: 50%; margin: 10px;">
+  </a>
+  <a href="https://github.com/mikagronroos2">
+    <img src="https://github.com/mikagronroos2.png" alt="@mikagronroos2" width="80" height="80" style="border-radius: 50%; margin: 10px;">
+  </a>
+  <a href="https://github.com/annikannisto">
+    <img src="https://github.com/annikannisto.png" alt="@annikannisto" width="80" height="80" style="border-radius: 50%; margin: 10px;">
+  </a>
+</div>
 
 
 ## 📄 License
