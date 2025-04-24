@@ -29,7 +29,7 @@
 ---
 
 <div align="center">
-  <img src="app/src/main/res/drawable/logo.png" alt="Project Logo" width="200" height="200">
+  <img src="app/src/main/res/drawable/logo.png" alt="Project Logo" width="250" height="250">
 </div>
 
 ## Features
