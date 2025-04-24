@@ -1,10 +1,8 @@
 # 🎨 Guess My Doodle
-<div align="center">
-  <img src="app/src/main/res/drawable/logo.png" alt="Project Logo" width="200" height="200">
+<div align="left" style="display: flex; align-items: center;">
+  <img src="app/src/main/res/drawable/logo.png" alt="Project Logo" width="100" height="100" style="margin-right: 20px;">
+  <p><strong>Guess My Doodle</strong> is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using <strong>Kotlin</strong> and <strong>Jetpack Compose</strong> in Android Studio and connects players via <strong>Bluetooth</strong>. The goal is to blend creativity and collaboration in a fun mobile experience.</p>
 </div>
-
-**Guess My Doodle** is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using **Kotlin** and **Jetpack Compose** in Android Studio and connects players via **Bluetooth**. The goal is to blend creativity and collaboration in a fun mobile experience.
-
 ---
 
 <details>
