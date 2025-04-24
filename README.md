@@ -33,7 +33,6 @@
 </div>
 
 ## Features
-- Clean and responsive UI with Jetpack Compose
 - ✏️ Draw using the touchscreen
 - 🔄 Random word generation
 - 📱 Bluetooth connection between two devices
