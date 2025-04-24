@@ -45,17 +45,19 @@ sealed interface DrawingAction {
     data object OnClearCanvasClick : DrawingAction
 }
 
-class DrawingViewModel : ViewModel() {
+class DrawingViewModel : ViewModel(){
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    fun onAction(action: DrawingAction) {
+    fun onAction(action: DrawingAction, bleViewModel: BleViewModel) {
         when (action) {
             DrawingAction.OnClearCanvasClick -> onClearCanvas()
             is DrawingAction.OnDraw -> onDraw(action.offset)
             DrawingAction.OnNewPathStart -> onNewPathStart()
             DrawingAction.OnPathEnd -> {
-                onPathEnd()
+                onPathEnd(
+                    bleViewModel = bleViewModel
+                )
                 // tähän send coordinates to server?
             }
             is DrawingAction.OnSelectColor -> onSelectColor(action.color)
@@ -96,7 +98,7 @@ class DrawingViewModel : ViewModel() {
         }
     }
 
-    private fun onPathEnd() {
+    private fun onPathEnd(bleViewModel: BleViewModel) {
         val currentPathData = state.value.currentPath ?: return
         _state.update {
             it.copy(
@@ -105,6 +107,10 @@ class DrawingViewModel : ViewModel() {
             )
         }
         //tähän send to server?
+        bleViewModel.sendCoordinatesToServer(
+            _state.value,
+            drawingViewModel = this,
+        )
 
 
     }
@@ -113,6 +119,7 @@ class DrawingViewModel : ViewModel() {
     fun updatePaths(newPaths: List<PathData>) {
         _state.update { it.copy(paths = newPaths) }
     }
+
     // byte serialisaatio
     fun serializePathDataBinary(data: PathData): ByteArray {
         // bufferSize = id + color(RGBA) + path.size + each Offset point * all points (in bytes)
@@ -133,6 +140,7 @@ class DrawingViewModel : ViewModel() {
         return buffer.array()
 
     }
+
     // deserialisointi
     fun deserializePathDataBinary(bytes: ByteArray): PathData {
         val buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)

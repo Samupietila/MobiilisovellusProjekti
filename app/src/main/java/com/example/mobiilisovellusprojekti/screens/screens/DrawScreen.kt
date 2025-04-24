@@ -15,6 +15,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.PathData
@@ -64,13 +66,13 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 }
 
 @Composable
-fun DrawScreen(navController: NavController, modifier: Modifier) {
+fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
     val viewModel = viewModel<DrawingViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val receiverViewModel = remember { DrawingViewModel() }
     val receiverState by receiverViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.paths) {
+    /*LaunchedEffect(state.paths) {
         Log.d("DBG", "LauchEffect launched")
         Log.d("DBG", "${state.paths.isNotEmpty()}")
         //if (state.paths.isNotEmpty()) {
@@ -80,6 +82,10 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
 
             receiverViewModel.updatePaths(receivedPaths)
         //}
+    }*/
+
+    LaunchedEffect(key1 = bleViewModel) {
+        bleViewModel.observeNotifications(navController.context, chatViewModel)
     }
 
 
@@ -90,20 +96,20 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        DrawingCanvas(
+        /*DrawingCanvas(
             paths = receiverState.paths,
             currentPath = receiverState.currentPath,
             // onAction = viewModel::onAction,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-        ) {}
+        ) {}*/
 
 
         DrawingCanvas(
             paths = state.paths,
             currentPath = state.currentPath,
-            onAction = viewModel::onAction,
+            onAction = { action -> viewModel.onAction(action, bleViewModel) },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
@@ -112,10 +118,10 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
             selectedColor = state.selectedColor,
             colors = allColors,
             onSelectColor = {
-                viewModel.onAction(DrawingAction.OnSelectColor(it))
+                viewModel.onAction(DrawingAction.OnSelectColor(it), bleViewModel)
             },
             onClearCanvas = {
-                viewModel.onAction((DrawingAction.OnClearCanvasClick))
+                viewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
             },
 
             )

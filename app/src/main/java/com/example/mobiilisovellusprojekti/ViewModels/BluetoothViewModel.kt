@@ -1,5 +1,6 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.AdvertiseData
@@ -39,6 +40,8 @@ import no.nordicsemi.android.kotlin.ble.core.advertiser.ManufacturerData
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
 import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
+import no.nordicsemi.android.kotlin.ble.core.scanner.BleScanFilter
+import no.nordicsemi.android.kotlin.ble.core.scanner.FilteredServiceUuid
 import no.nordicsemi.android.kotlin.ble.scanner.BleScanner
 import no.nordicsemi.android.kotlin.ble.scanner.aggregator.BleScanResultAggregator
 import no.nordicsemi.android.kotlin.ble.server.main.ServerBleGatt
@@ -86,8 +89,19 @@ class ChatBleServer(
         onServerCreated: (ServerBleGatt) -> Unit
     ) {
         viewModelScope.launch {
-            val serverCharasteristics = ServerBleGattCharacteristicConfig(
+            val messageCharasteristics = ServerBleGattCharacteristicConfig(
                 BleViewModel.CHARACTERISTIC_UUID,
+                listOf(
+                    BleGattProperty.PROPERTY_READ,
+                    BleGattProperty.PROPERTY_WRITE,
+                    BleGattProperty.PROPERTY_NOTIFY),
+                listOf(
+                    BleGattPermission.PERMISSION_READ,
+                    BleGattPermission.PERMISSION_WRITE)
+            )
+
+            val coordinatesCharasteristics = ServerBleGattCharacteristicConfig(
+                BleViewModel.COORDINATES_UUID,
                 listOf(
                     BleGattProperty.PROPERTY_READ,
                     BleGattProperty.PROPERTY_WRITE,
@@ -100,7 +114,7 @@ class ChatBleServer(
             val serverConfig = ServerBleGattServiceConfig(
                 BleViewModel.SERVICE_UUID,
                 ServerBleGattServiceType.SERVICE_TYPE_PRIMARY,
-                listOf(serverCharasteristics)
+                listOf(messageCharasteristics, coordinatesCharasteristics)
             )
 
             val server = ServerBleGatt.create(context, this, serverConfig)
@@ -110,27 +124,49 @@ class ChatBleServer(
 
 
     // SET UP THE DATA HERE
-    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel) {
+    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
+
+        // Search for Charasteristic
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
+        // Handle Messages here and what happens next
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
             Log.d("ChatBleServer", "Received message: $message")
             chatViewModel.addMessage(message, isSentByUser = false)
-
-
         }?.launchIn(viewModelScope)
+
+        // Search for Charasteristic
+        val coordinatesCharasteristics = services.findCharacteristic(BleViewModel.COORDINATES_UUID)
+
+        // Handle Data and what happens here
+        coordinatesCharasteristics?.value?.onEach { data ->
+            try {
+                Log.d("ChatBleServer", "Received coordinates characteristic: ${data.toString()}")
+                Log.d("ChatBleServer", "Received coordinates data: ${data.value}")
+                val coordinates = drawingViewModel.deserializePathDataBinary(data.value)
+                Log.d("ChatBleServer", "Received coordinates: $coordinates")
+
+
+                // TODO: Handle the received coordinates here
+                /*drawingViewModel.updatePaths()*/
+
+            } catch (e: Exception) {
+                Log.e("ChatBleServer", "Failed to deserialize coordinates: ${e.message}")
+            }
+        }?.launchIn(viewModelScope)
+
     }
 
 
-    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
+    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
         server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
             .map { it.connection }
             .onEach { connection ->
                 _connectedDevices.add(ServerConnectionEvent.DeviceConnected(connection))
                 connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
-                    setUpServices(service, viewModelScope, chatViewModel)
+                    setUpServices(service, viewModelScope, chatViewModel, drawingViewModel)
 
                     // Notify the devices that connection has been established
                     onDeviceConnected()
@@ -140,15 +176,15 @@ class ChatBleServer(
 
     fun startAdvertising() {
         val requiredPermissions =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 arrayOf(
-                    android.Manifest.permission.BLUETOOTH_ADVERTISE,
-                    android.Manifest.permission.BLUETOOTH_CONNECT,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.BLUETOOTH_ADMIN
+                    Manifest.permission.BLUETOOTH_ADVERTISE,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_ADMIN
                 )
             } else {
-                arrayOf(android.Manifest.permission.BLUETOOTH)
+                arrayOf(Manifest.permission.BLUETOOTH)
             }
 
         val missingPermissions = requiredPermissions.filter {
@@ -156,6 +192,7 @@ class ChatBleServer(
         }
 
         if (missingPermissions.isNotEmpty()) {
+            startAdvertisingProcess()
             Log.e(
                 "ChatBleServer",
                 "Missing required Bluetooth permissions: $missingPermissions"
@@ -203,9 +240,9 @@ class ChatBleServer(
         }
     }
 
-    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
+    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
         declareServer(context, viewModelScope) { server ->
-            observeConnections(server, viewModelScope, chatViewModel,onDeviceConnected)
+            observeConnections(server, viewModelScope, chatViewModel, drawingViewModel,onDeviceConnected)
         }
     }
 
@@ -258,8 +295,14 @@ class BleViewModel : ViewModel() {
         // SERVICE_UUID to find the service we are looking for
         val SERVICE_UUID = UUID.fromString("b7ceba11-2542-477f-a2a3-f8012d6ce13c")
 
+
+        // Messages
         // Characteristic UUID = Where the data will be located at
         val CHARACTERISTIC_UUID: UUID = UUID.fromString("9c0cd23f-44c1-4d3d-aaa3-7678bf19a218")
+
+        // Canvas
+        // Coordinates UUID to where the canvas coordinates will be placed
+        val COORDINATES_UUID: UUID = UUID.fromString("ba598b1a-2458-48fb-ae8d-ed71b4760cdf")
     }
 
 
@@ -282,6 +325,12 @@ class BleViewModel : ViewModel() {
     val connectionCharasteristic: ClientBleGattCharacteristic?
         get() = _characteristic
 
+
+    // Coordinates Charasteristic
+    private var _coordCharasteristic: ClientBleGattCharacteristic? = null
+    val coordinateCharasteristic: ClientBleGattCharacteristic?
+        get() = _coordCharasteristic
+
     val advertisingState: StateFlow<AdvertisingState>
         get() = if (::chatBleServer.isInitialized) {
             chatBleServer.state
@@ -294,9 +343,9 @@ class BleViewModel : ViewModel() {
     val isAdvertising = MutableLiveData(false)
     val connectionState = MutableLiveData<String>()
 
-    fun startAdvertising(context: Context, chatViewModel: ChatViewModel ,onDeviceConnected: () -> Unit) {
+    fun startAdvertising(context: Context, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel ,onDeviceConnected: () -> Unit) {
         if (::chatBleServer.isInitialized) {
-            chatBleServer.startServer(context, viewModelScope, chatViewModel,onDeviceConnected)
+            chatBleServer.startServer(context, viewModelScope, chatViewModel,drawingViewModel,onDeviceConnected)
             isAdvertising.value = true
             Log.d("DBG?","${isAdvertising.value}")
             chatBleServer.startAdvertising()
@@ -306,10 +355,10 @@ class BleViewModel : ViewModel() {
     }
 
     fun scanDevices(context: Context) {
-        val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            android.Manifest.permission.BLUETOOTH_SCAN
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Manifest.permission.BLUETOOTH_SCAN
         } else {
-            android.Manifest.permission.BLUETOOTH
+            Manifest.permission.BLUETOOTH
         }
 
         if (ContextCompat.checkSelfPermission(
@@ -320,15 +369,15 @@ class BleViewModel : ViewModel() {
             val aggregator = BleScanResultAggregator()
             isScanning.value = true
 
-            val serviceUuid = no.nordicsemi.android.kotlin.ble.core.scanner.FilteredServiceUuid(
+            val serviceUuid = FilteredServiceUuid(
                 uuid = ParcelUuid(GAME_UUID)
             )
 
-            val scanFilter = no.nordicsemi.android.kotlin.ble.core.scanner.BleScanFilter(
+            val scanFilter = BleScanFilter(
                 serviceUuid = serviceUuid
             )
             Log.d("DBG", "scanning for $scanFilter")
-            BleScanner(context).scan()
+            BleScanner(context).scan(listOf(scanFilter))
                 .map { aggregator.aggregateDevices(it) }
                 .onEach {
                     scanResults.value = it
@@ -363,8 +412,12 @@ class BleViewModel : ViewModel() {
                 Log.e("ConnectToDevice", "No characteristic found")
                 return false
             }
+
+            val coordinates = service.findCharacteristic(COORDINATES_UUID)
+
             _connection = connection
             _characteristic = characteristic
+            _coordCharasteristic = coordinates
             connectionState.postValue("Connected to ${device.name ?: "Unknown"}")
         } catch (e: Exception) {
             connectionState.postValue("Failed to connect to ${device.name ?: "Unknown"}: ${e.message}")
@@ -432,12 +485,14 @@ class BleViewModel : ViewModel() {
     }
 
     fun sendCoordinatesToServer( drawingState: DrawingState, drawingViewModel: DrawingViewModel) {
-        val characteristic = connectionCharasteristic
+        Log.d("sendCoordinatesToServer", "Sending coordinates to server")
+        val characteristic = coordinateCharasteristic
         val coordinates = drawingState.paths
         if (characteristic != null) {
             viewModelScope.launch {
                 try {
                     coordinates.forEach { coordinate ->
+                        Log.d("Cord",coordinate.toString())
                         // serialisoidaan, en oo tehny mitää vastaanottamiseen
                         val byteData = drawingViewModel.serializePathDataBinary(coordinate)
                         val data = DataByteArray(byteData)
