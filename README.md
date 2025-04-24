@@ -1,10 +1,5 @@
 # 🎨 Guess My Doodle
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
-
 **Guess My Doodle** is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using **Kotlin** and **Jetpack Compose** in Android Studio and connects players via **Bluetooth**. The goal is to blend creativity and collaboration in a fun mobile experience.
 
 ---
@@ -32,7 +27,7 @@
 1. Make sure you have Android Studio (Bumblebee or newer) installed.
 2. Clone the project:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/guess-my-doodle.git
+   git clone https://github.com/Samupietila/MobiilisovellusProjekti.git
 3. Open the project in Android Studio.
 4. Run the app on two physical Android devices to test Bluetooth features.
    
