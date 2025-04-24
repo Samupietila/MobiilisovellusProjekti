@@ -14,7 +14,7 @@
   <summary>Table of Contents</summary>
   
 1. [Features](#features)
-2. [Technologies & Tools](#technologies-tools)
+2. [Technologies and Tools](#technologies-and-tools)
 3. [Installation](#installation)
 4. [Screenshots](#screenshots)
 5. [Architecture](#architecture)
@@ -41,7 +41,7 @@
 - Clean and responsive UI with Jetpack Compose
 
 
-## Technologies & Tools
+## Technologies and Tools
 
 - **Kotlin** – Primary language
 - **Jetpack Compose** – Modern UI toolkit
