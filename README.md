@@ -26,7 +26,7 @@
 
 ---
 
-## 📱 Features
+## Features
 
 - Draw using the touchscreen
 - Random word generation
@@ -36,7 +36,7 @@
 - Clean and responsive UI with Jetpack Compose
 
 
-## 🛠️ Technologies & Tools
+## Technologies & Tools
 
 - **Kotlin** – Primary language
 - **Jetpack Compose** – Modern UI toolkit
@@ -44,7 +44,7 @@
 - **Kotlin-BLE** – For peer-to-peer communication
 
 
-## ⚙️ Installation
+## Installation
 
 1. Make sure you have Android Studio (Bumblebee or newer) installed.
 2. Clone the project:
@@ -54,29 +54,29 @@
 4. Run the app on two physical Android devices to test Bluetooth features.
    
 
-## 📸 Screenshots
+## Screenshots
 
 - Coming soon...
 
 
-## 🏗️ Architecture
+## Architecture
 
 
-## ✅ Testing
+## Testing
 
 - Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
 
 
-## 📂 Folder Structure
+## Folder Structure
 
 
-## 🚧 Project Status
+## Project Status
 - MVP Completed
 - Polish & Improvements in Progress
 
-## 🛣️ Roadmap
+## Roadmap
 
-## 👨‍💻 Developers
+## Developers
 
 | [@jukkiss](https://github.com/jukkiss) | [@samupietila](https://github.com/samupietila) | [@mikagronroos2](https://github.com/mikagronroos2) | [@annikannisto](https://github.com/annikannisto) |
 |:--:|:--:|:--:|:--:|
@@ -84,4 +84,4 @@
 
 
 
-## 📄 License
+## License
