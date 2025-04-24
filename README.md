@@ -1,3 +1,9 @@
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stars][stars-shield]](https://github.com/gitober/Student-Information-System/stargazers)
+[![Issues][issues-shield]][issues-url]
+
 # 🎨 Guess My Doodle
 
 **Guess My Doodle** is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using **Kotlin** and **Jetpack Compose** in Android Studio and connects players via **Bluetooth**. The goal is to blend creativity and collaboration in a fun mobile experience.
@@ -46,7 +52,7 @@
 
 
 ## 📂 Folder Structure
-app/ ├── manifests/ │ └── AndroidManifest.xml ├── kotlin+java/ │ └── com.example.mobiilisovellusprojekti/ │ ├── data/ │ │ ├── Word.kt │ │ ├── WordDao.kt │ │ ├── WordDatabase.kt │ │ └── WordRepository.kt │ ├── screens/ │ │ ├── navigation/ │ │ └── screens/ │ ├── ui.theme/ │ │ ├── ButtonStyles.kt │ │ ├── Color.kt │ │ ├── Theme.kt │ │ └── Type.kt │ ├── ViewModels/ │ │ ├── BluetoothViewModel.kt │ │ ├── DrawingViewModel.kt │ │ └── WordViewModel.kt │ └── MainActivity.kt ├── test/ │ ├── WordDaoTest.kt │ ├── DrawingViewModelTest.kt │ └── ExampleUnitTest.kt ├── androidTest/ │ ├── ExampleInstrumentedTest.kt │ └── WordDaoTest.kt ├── res/ │ ├── drawable/ │ │ ├── eraser.png │ │ ├── logo.png │ │ ├── ic_launcher_background.xml │ │ └── ic_launcher_foreground.xml │ ├── mipmap/ │ ├── values/ │ └── xml/ ├── build.gradle.kts ├── proguard-rules.pro
+
 
 
 ## 🚧 Project Status
