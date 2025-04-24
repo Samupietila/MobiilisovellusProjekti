@@ -55,14 +55,11 @@ Polish & Improvements in Progress
 ## 🛣️ Roadmap
 
 ## 👨‍💻 Developers
-[@jukkiss](https://github.com/jukkiss)
-<img src="https://github.com/jukkiss.png" width="50" height="50">
-[@samupietila](https://github.com/samupietila)
-<img src="https://github.com/samupietila.png" width="50" height="50">
-[@mikagronroos2](https://github.com/mikagronroos2)
-<img src="https://github.com/mikagronroos2.png" width="50" height="50">
-[@annikannisto](https://github.com/annikannisto)
-<img src="https://github.com/annikannisto.png" width="50" height="50">
+
+| [@jukkiss](https://github.com/jukkiss) | [@samupietila](https://github.com/samupietila) | [@mikagronroos2](https://github.com/mikagronroos2) | [@annikannisto](https://github.com/annikannisto) |
+|:--:|:--:|:--:|:--:|
+| <img src="https://github.com/jukkiss.png" width="70" height="70"> | <img src="https://github.com/samupietila.png" width="70" height="70"> | <img src="https://github.com/mikagronroos2.png" width="70" height="70"> | <img src="https://github.com/annikannisto.png" width="70" height="70"> |
+
 
 ## 📄 License
 
