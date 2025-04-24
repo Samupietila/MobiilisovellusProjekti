@@ -71,14 +71,15 @@ Asynchronous operations are handled using **Kotlin Coroutines**, and **Room** is
 - Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
 
 
-## Folder Structure
-
-
 ## Project Status
 - MVP Completed
 - Polish & Improvements in Progress
 
 ## Roadmap
+- [ ] 📊 Track player scores and game statistics
+- [ ] 👥 Add support for multiplayer/group mode (more than 2 players)
+- [ ] 🧾 Add game history tracking (view past games and results)
+- [ ] 🌍 Explore cross-platform support with Kotlin Multiplatform
 
 ## Developers
 
