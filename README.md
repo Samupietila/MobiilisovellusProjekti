@@ -1,5 +1,14 @@
 # 🎨 Guess My Doodle
 
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Platform](https://img.shields.io/badge/platform-Android-blue)
+![Language](https://img.shields.io/badge/language-Kotlin-orange)
+![UI](https://img.shields.io/badge/UI-Jetpack%20Compose-7950F2?logo=android)
+![Bluetooth](https://img.shields.io/badge/Bluetooth-BLE-007BFF?logo=bluetooth)
+![License](https://img.shields.io/github/license/Samupietila/MobiilisovellusProjekti)
+![Status](https://img.shields.io/badge/status-MVP%20Ready-success)
+
+
 **Guess My Doodle** is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using **Kotlin** and **Jetpack Compose** in Android Studio and connects players via **Bluetooth**. The goal is to blend creativity and collaboration in a fun mobile experience.
 
 ---
