@@ -80,6 +80,8 @@ Asynchronous operations are handled using **Kotlin Coroutines**, and **Room** is
 - [ ] 👥 Add support for multiplayer/group mode (more than 2 players)
 - [ ] 🧾 Add game history tracking (view past games and results)
 - [ ] 🌍 Explore cross-platform support with Kotlin Multiplatform
+- [ ] 👤 Add player profile support (nickname, avatar)
+- [ ] 📇 Implement contact system for inviting friends
 
 ## Developers
 
