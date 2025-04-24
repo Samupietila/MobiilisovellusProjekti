@@ -1,30 +1,69 @@
-# Guess My Doodle
+# 🎨 Guess My Doodle
 
-Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sanan ja toiset yrittävät arvata piirroksen. Sovellus on toteutettu Kotlinilla Jetpack Compose -kirjastoa hyödyntäen Android Studiossa. Tavoitteena on yhdistää luovuus ja yhteistoiminta mobiilialustalla.
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 
-## Sovelluksen ominaisuudet
+**Guess My Doodle** is an Android app where one player draws a given word, and the other tries to guess what it is. The app is built using **Kotlin** and **Jetpack Compose** in Android Studio and connects players via **Bluetooth**. The goal is to blend creativity and collaboration in a fun mobile experience.
 
-## Teknologiat ja työkalut
+---
 
-- Kotlin
-- Jetpack Compose
-- Android Studio
+## 📱 Features
 
-## Asennusohjeet
+- 🎨 Draw using the touchscreen
+- 🔄 Random word generation
+- 🔵 Bluetooth connection between two devices
+- 🧠 Word guessing logic
+- 🕹️ Real-time interaction
+- 🧼 Clean and responsive UI with Jetpack Compose
 
-## Kuvakaappaukset
+---
 
-## Arkkitehtuuri
+## 🛠️ Technologies & Tools
 
-## Testaus
+- **Kotlin** – Primary language
+- **Jetpack Compose** – Modern UI toolkit
+- **Android Studio** – Development environment
+- **Bluetooth API** – For peer-to-peer communication
 
-## Kansiostruktuuri
+---
 
-## Valmistilanne
+## ⚙️ Installation
 
-## Tulevat ominaisuudet (Roadmap)
+1. Make sure you have Android Studio (Bumblebee or newer) installed.
+2. Clone the project:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/guess-my-doodle.git
+3. Open the project in Android Studio.
+4. Run the app on two physical Android devices to test Bluetooth features.
+   
+---
 
-## Kehittäjät
+## 📸 Screenshots
+
+Coming soon...
+
+---
+
+## 🏗️ Architecture
+---
+
+## ✅ Testing
+
+Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
+
+
+## 📂 Folder Structure
+
+
+## 🚧 Project Status
+MVP Completed
+Polish & Improvements in Progress
+
+## 🛣️ Roadmap
+
+## 👨‍💻 Developers
 [@jukkiss](https://github.com/jukkiss)
 <img src="https://github.com/jukkiss.png" width="50" height="50">
 [@samupietila](https://github.com/samupietila)
@@ -34,7 +73,7 @@ Guess My Doodle on Android-sovellus, jossa käyttäjät piirtävät annetun sana
 [@annikannisto](https://github.com/annikannisto)
 <img src="https://github.com/annikannisto.png" width="50" height="50">
 
-## Lisenssi
+## 📄 License
 
 
 
