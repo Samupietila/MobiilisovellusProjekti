@@ -4,7 +4,9 @@
 
 ---
 
-## 📑 Table of Contents
+<details>
+  <summary>📑 Table of Contents</summary>
+  
 1. [Features](#-features)
 2. [Technologies & Tools](#-technologies--tools)
 3. [Installation](#-installation)
@@ -16,6 +18,8 @@
 9. [Roadmap](#-roadmap)
 10. [Developers](#-developers)
 11. [License](#-license)
+
+</details>
 
 ---
 
