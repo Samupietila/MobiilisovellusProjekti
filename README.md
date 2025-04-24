@@ -8,7 +8,7 @@
 ---
 
 <details>
-  <summary>📑 Table of Contents</summary>
+  <summary>Table of Contents</summary>
   
 1. [Features](#-features)
 2. [Technologies & Tools](#-technologies--tools)
@@ -68,7 +68,6 @@
 
 
 ## 📂 Folder Structure
-
 
 
 ## 🚧 Project Status
