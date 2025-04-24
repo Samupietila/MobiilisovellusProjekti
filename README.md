@@ -18,7 +18,6 @@
 - 🕹️ Real-time interaction
 - 🧼 Clean and responsive UI with Jetpack Compose
 
----
 
 ## 🛠️ Technologies & Tools
 
@@ -27,7 +26,6 @@
 - **Android Studio** – Development environment
 - **Bluetooth API** – For peer-to-peer communication
 
----
 
 ## ⚙️ Installation
 
@@ -38,16 +36,14 @@
 3. Open the project in Android Studio.
 4. Run the app on two physical Android devices to test Bluetooth features.
    
----
 
 ## 📸 Screenshots
 
 Coming soon...
 
----
 
 ## 🏗️ Architecture
----
+
 
 ## ✅ Testing
 
