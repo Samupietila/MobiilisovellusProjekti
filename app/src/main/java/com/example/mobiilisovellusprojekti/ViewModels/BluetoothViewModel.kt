@@ -144,12 +144,18 @@ class ChatBleServer(
             try {
                 Log.d("ChatBleServer", "Received coordinates characteristic: ${data.toString()}")
                 Log.d("ChatBleServer", "Received coordinates data: ${data.value}")
-                val coordinates = drawingViewModel.deserializePathDataBinary(data.value)
-                Log.d("ChatBleServer", "Received coordinates: $coordinates")
 
+                var convertedValue = drawingViewModel.deserializePathDataBinary(data.value)
+                val newPaths = mutableListOf<PathData>()
+
+                newPaths.add(convertedValue)
+
+
+                drawingViewModel.updatePaths(newPaths)
 
                 // TODO: Handle the received coordinates here
                 /*drawingViewModel.updatePaths()*/
+
 
             } catch (e: Exception) {
                 Log.e("ChatBleServer", "Failed to deserialize coordinates: ${e.message}")
@@ -454,8 +460,6 @@ class BleViewModel : ViewModel() {
         }
     }
 
-
-    // Ei toimi??
     fun sendMessageToClient(message: String, chatViewModel: ChatViewModel) {
         if (::chatBleServer.isInitialized) {
             chatViewModel.addMessage(message, isSentByUser = true)

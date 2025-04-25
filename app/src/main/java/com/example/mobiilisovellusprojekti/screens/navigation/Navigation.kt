@@ -50,7 +50,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
-        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier, bleViewModel, chatViewModel) }
+        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
         composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
         composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }

@@ -66,11 +66,9 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 }
 
 @Composable
-fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
-    val viewModel = viewModel<DrawingViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val receiverViewModel = remember { DrawingViewModel() }
-    val receiverState by receiverViewModel.state.collectAsStateWithLifecycle()
+fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
+    val state by drawingViewModel.state.collectAsStateWithLifecycle()
+
 
     /*LaunchedEffect(state.paths) {
         Log.d("DBG", "LauchEffect launched")
@@ -84,6 +82,11 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
         //}
     }*/
 
+
+    LaunchedEffect(state.paths) {
+        Log.d("DS","Composed")
+        Log.d("DS",state.paths.toString())
+    }
     LaunchedEffect(key1 = bleViewModel) {
         bleViewModel.observeNotifications(navController.context, chatViewModel)
     }
@@ -109,7 +112,7 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
         DrawingCanvas(
             paths = state.paths,
             currentPath = state.currentPath,
-            onAction = { action -> viewModel.onAction(action, bleViewModel) },
+            onAction = { action -> drawingViewModel.onAction(action, bleViewModel) },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
@@ -118,10 +121,10 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
             selectedColor = state.selectedColor,
             colors = allColors,
             onSelectColor = {
-                viewModel.onAction(DrawingAction.OnSelectColor(it), bleViewModel)
+                drawingViewModel.onAction(DrawingAction.OnSelectColor(it), bleViewModel)
             },
             onClearCanvas = {
-                viewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
+                drawingViewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
             },
 
             )
