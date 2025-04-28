@@ -22,13 +22,15 @@ import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.text.compareTo
 import kotlin.toString
 
 @Composable
-fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
+fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
 
     val context = LocalContext.current
 
@@ -65,17 +67,19 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
+            Text(
+                text = "${UUID.fromString("a902a33a-7a3a-4937-b4bf-b0cd141346b5")}"
+            )
             // Aloita Advertising
             Button(
-                onClick = { bleViewModel.startAdvertising(context, chatViewModel) {
-                    navController.navigate(NavigationScreens.GAMESCREEN.title)
+                onClick = { bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel) {
+                    navController.navigate(NavigationScreens.DRAWSCREEN.title)
                 } },
                 enabled = !isScanning,
                 colors = primaryButtonColors(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (advertisingState.isAdvertising) "Advertising" else "Advertise", style = MaterialTheme.typography.bodyLarge)
+                Text(if (advertisingState.isAdvertising == true) "Advertising" else "Advertise", style = MaterialTheme.typography.bodyLarge)
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,7 +112,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                                         Log.d("Test", result.toString())
                                         val isConnected = bleViewModel.connectToDevice(context, result)
                                         if (isConnected) {
-                                            navController.navigate(NavigationScreens.GAMESCREEN.title)
+                                            navController.navigate(NavigationScreens.DRAWSCREEN.title)
                                         } else {
                                             Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
                                         }

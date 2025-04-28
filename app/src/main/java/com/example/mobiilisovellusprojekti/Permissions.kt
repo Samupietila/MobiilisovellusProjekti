@@ -10,13 +10,26 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 const val PERMISSION_REQUEST_CODE = 1
-
+/*
 private val bluetoothPermissions = arrayOf(
     Manifest.permission.BLUETOOTH_ADVERTISE,
     Manifest.permission.BLUETOOTH_SCAN,
     Manifest.permission.BLUETOOTH_CONNECT
 )
-
+*/
+private val bluetoothPermissions: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    arrayOf(
+        Manifest.permission.BLUETOOTH_SCAN,
+        Manifest.permission.BLUETOOTH_ADVERTISE,
+        Manifest.permission.BLUETOOTH_CONNECT
+    )
+} else {
+    arrayOf(
+        Manifest.permission.BLUETOOTH,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.BLUETOOTH_ADMIN
+    )
+}
 
 
 fun hasBluetoothPermissions(context: Context): Boolean {

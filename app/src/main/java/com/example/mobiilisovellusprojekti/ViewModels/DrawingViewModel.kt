@@ -1,11 +1,15 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 data class DrawingColor(
     val color: Color,
@@ -41,16 +45,21 @@ sealed interface DrawingAction {
     data object OnClearCanvasClick : DrawingAction
 }
 
-class DrawingViewModel : ViewModel() {
+class DrawingViewModel : ViewModel(){
     private val _state = MutableStateFlow(DrawingState())
     val state = _state.asStateFlow()
 
-    fun onAction(action: DrawingAction) {
+    fun onAction(action: DrawingAction, bleViewModel: BleViewModel) {
         when (action) {
             DrawingAction.OnClearCanvasClick -> onClearCanvas()
             is DrawingAction.OnDraw -> onDraw(action.offset)
             DrawingAction.OnNewPathStart -> onNewPathStart()
-            DrawingAction.OnPathEnd -> onPathEnd()
+            DrawingAction.OnPathEnd -> {
+                onPathEnd(
+                    bleViewModel = bleViewModel
+                )
+                // tähän send coordinates to server?
+            }
             is DrawingAction.OnSelectColor -> onSelectColor(action.color)
         }
     }
@@ -89,7 +98,7 @@ class DrawingViewModel : ViewModel() {
         }
     }
 
-    private fun onPathEnd() {
+    private fun onPathEnd(bleViewModel: BleViewModel) {
         val currentPathData = state.value.currentPath ?: return
         _state.update {
             it.copy(
@@ -97,5 +106,60 @@ class DrawingViewModel : ViewModel() {
                 paths = it.paths + currentPathData
             )
         }
+        //tähän send to server?
+        bleViewModel.sendCoordinatesToServer(
+            _state.value,
+            drawingViewModel = this,
+        )
+
+
+    }
+
+    //testaamiseen ilman bluetoothia tarkoitettu
+    fun updatePaths(newPaths: List<PathData>) {
+        Log.d("DWM", "updatePaths triggered")
+        Log.d("DWM",newPaths.toString())
+
+        _state.update { it.copy(paths = newPaths) }
+    }
+
+    // byte serialisaatio
+    fun serializePathDataBinary(data: PathData): ByteArray {
+        // bufferSize = id + color(RGBA) + path.size + each Offset point * all points (in bytes)
+        val bufferSize = 8 + 4 * 4 + 4 + data.path.size * 8
+        val buffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
+        buffer.putLong(data.id.toLong())
+        buffer.putFloat(data.color.red)
+        buffer.putFloat(data.color.green)
+        buffer.putFloat(data.color.blue)
+        buffer.putFloat(data.color.alpha)
+        buffer.putInt(data.path.size)
+
+        data.path.forEach { offset ->
+            buffer.putFloat(offset.x)
+            buffer.putFloat(offset.y)
+        }
+
+        return buffer.array()
+    }
+
+    // deserialisointi
+    fun deserializePathDataBinary(bytes: ByteArray): PathData {
+        val buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
+        val id = buffer.long.toString()
+        val color = Color(
+            buffer.float,
+            buffer.float,
+            buffer.float,
+            buffer.float
+        )
+        val pathSize = buffer.int
+        val path = mutableListOf<Offset>()
+        repeat(pathSize) {
+            val x = buffer.float
+            val y = buffer.float
+            path.add(Offset(x,y))
+        }
+        return PathData(id, color, path)
     }
 }

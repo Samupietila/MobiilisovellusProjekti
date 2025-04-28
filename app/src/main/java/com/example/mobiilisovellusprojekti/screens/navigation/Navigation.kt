@@ -16,10 +16,9 @@ import com.example.mobiilisovellusprojekti.screens.screens.GameStatistics
 import androidx.compose.ui.Modifier
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.screens.screens.Test
 import com.example.mobiilisovellusprojekti.screens.screens.WordScreen
-import com.example.mobiilisovellusprojekti.screens.screens.GuessScreen
-
 
 
 enum class NavigationScreens(val title: String) {
@@ -33,33 +32,30 @@ enum class NavigationScreens(val title: String) {
     PLAYER("Player"),
     STATISTICS("GameStatistics"),
     TEST("Test"),
-    WORD("Word"),
-    GUESS("Guess")
+    WORD("Word")
 }
 
 
 // IMPLEMENTOI BACKSTACK JA SEN KÄYTTÖLIITTYMÄ???
 @Composable
-fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
+fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = NavigationScreens.TEST.title
     ) {
-      
-        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
+
+       composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel) }
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
-        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
+        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
         composable(NavigationScreens.GAMESCREEN.title) { GameScreen(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
         composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
         composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
         composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
-        composable(NavigationScreens.GUESS.title) { GuessScreen(modifier) }
-
     }
 }

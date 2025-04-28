@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -15,8 +16,47 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
+
+
+val mockPathDataList = listOf(
+    PathData(
+        id = "mock1",
+        color = Color(0f, 0f, 0f, 1f), // Musta väri, täysi läpinäkymättömyys
+        path = listOf(
+            Offset(100f, 100f),
+            Offset(150f, 120f),
+            Offset(200f, 130f),
+            Offset(250f, 170f),
+            Offset(300f, 210f),
+            Offset(350f, 260f)
+        )
+    ),
+    PathData(
+        id = "mock2",
+        color = Color(1f, 0f, 0f, 1f), // Punainen
+        path = listOf(
+            Offset(400f, 300f),
+            Offset(420f, 310f),
+            Offset(440f, 330f),
+            Offset(460f, 360f),
+            Offset(480f, 400f)
+        )
+    ),
+    PathData(
+        id = "mock3",
+        color = Color(0f, 0f, 1f, 0.5f), // Sininen, puoliksi läpinäkyvä
+        path = listOf(
+            Offset(100f, 500f),
+            Offset(130f, 520f),
+            Offset(160f, 550f),
+            Offset(190f, 590f),
+            Offset(220f, 630f)
+        )
+    )
+)
 
 
 @Composable
@@ -49,8 +89,8 @@ fun GuessScreen(
                     .background(Color.White)
             ) {
                 DrawingCanvas(
-                    paths = state.paths,
-                    currentPath = state.currentPath,
+                    paths = mockPathDataList,
+                    currentPath = null,
                     onAction = {},
                     modifier = Modifier.fillMaxSize()
                 )
