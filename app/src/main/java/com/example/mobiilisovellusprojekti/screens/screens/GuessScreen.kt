@@ -77,7 +77,7 @@ fun GuessScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeNotifications(navController.context, chatViewModel)
+        bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
     }
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {

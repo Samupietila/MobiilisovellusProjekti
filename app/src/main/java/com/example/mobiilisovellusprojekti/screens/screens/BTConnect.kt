@@ -73,6 +73,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
             // Aloita Advertising
             Button(
                 onClick = { bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel) {
+                    bleViewModel.isHost.value = true
                     navController.navigate(NavigationScreens.DRAWSCREEN.title)
                 } },
                 enabled = !isScanning,
@@ -112,7 +113,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                                         Log.d("Test", result.toString())
                                         val isConnected = bleViewModel.connectToDevice(context, result)
                                         if (isConnected) {
-                                            navController.navigate(NavigationScreens.GUESSSCREEN.title)
+                                            navController.navigate(NavigationScreens.DRAWSCREEN.title)
                                         } else {
                                             Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
                                         }

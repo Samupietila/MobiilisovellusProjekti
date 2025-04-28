@@ -72,11 +72,9 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
 
 
-
-
-
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeNotifications(navController.context, chatViewModel)
+        bleViewModel.observeChatNotifications(navController.context, chatViewModel)
+        bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
     }
 
 

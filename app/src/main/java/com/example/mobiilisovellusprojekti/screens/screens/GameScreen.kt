@@ -39,7 +39,7 @@ fun GameScreen(
     var isSending by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeNotifications(navController.context, chatViewModel)
+        bleViewModel.observeChatNotifications(navController.context, chatViewModel)
     }
 
     Column(
