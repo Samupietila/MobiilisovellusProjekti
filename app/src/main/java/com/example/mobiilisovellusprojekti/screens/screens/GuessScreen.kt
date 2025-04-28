@@ -1,5 +1,6 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -165,7 +166,11 @@ fun GuessScreen(
                     onDone = {
                         if (message.isNotBlank()) {
                             guesses = guesses + message
-                            println("Submitted guess: $message")
+                            Log.d("onDone TEXTFIELD","Send message: $message")
+                            bleViewModel.sendMessage(
+                                message,
+                                chatViewModel = chatViewModel
+                            )
                             message = ""
                             focusManager.clearFocus()
                         }
@@ -174,6 +179,8 @@ fun GuessScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+
+
 
             // Teeman vaihtonappi testausta varten (poistetaan myöhemmin)
             Button(

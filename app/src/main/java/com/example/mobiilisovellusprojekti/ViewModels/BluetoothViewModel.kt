@@ -583,18 +583,15 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    fun sendMessageToClient(message: String, chatViewModel: ChatViewModel) {
-        if (::chatBleServer.isInitialized) {
-            chatViewModel.addMessage(message, isSentByUser = true)
+    fun sendMessage(message: String, chatViewModel: ChatViewModel) {
+
+        if (isHost.value == true) {
             chatBleServer.sendData(message, viewModelScope)
-        } else {
-            Log.e("BleViewModel", "ChatBleServer is not initialized")
+            Log.d("BleViewModel", "Message sent to server: $message")
+            chatViewModel.addMessage(message, isSentByUser = true)
+            return
         }
-    }
 
-
-
-    fun sendMessageToServer(message: String, chatViewModel: ChatViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             viewModelScope.launch {
@@ -666,8 +663,4 @@ class BleViewModel : ViewModel() {
             }
         }
     }
-
-
-
-
 }

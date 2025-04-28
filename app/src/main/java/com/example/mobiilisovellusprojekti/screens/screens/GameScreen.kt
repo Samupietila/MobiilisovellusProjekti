@@ -75,7 +75,7 @@ fun GameScreen(
                     isSending = true // Set the flag to true before starting the coroutine
                     bleViewModel.viewModelScope.launch {
                         try {
-                            bleViewModel.sendMessageToClient(textInput, chatViewModel) // Pass the textInput to the function
+                            bleViewModel.sendMessage(textInput, chatViewModel) // Pass the textInput to the function
                             textInput = "" // Clear the input field after sending
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -98,7 +98,7 @@ fun GameScreen(
                     isSending = true // Set the flag to true before starting the coroutine
                     bleViewModel.viewModelScope.launch {
                         try {
-                            bleViewModel.sendMessageToServer(textInput, chatViewModel) // Pass the textInput to the function
+                            bleViewModel.sendMessage(textInput, chatViewModel) // Pass the textInput to the function
                             textInput = "" // Clear the input field after sending
                         } catch (e: Exception) {
                             e.printStackTrace()

@@ -113,7 +113,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                                         Log.d("Test", result.toString())
                                         val isConnected = bleViewModel.connectToDevice(context, result)
                                         if (isConnected) {
-                                            navController.navigate(NavigationScreens.DRAWSCREEN.title)
+                                            navController.navigate(NavigationScreens.GUESSSCREEN.title)
                                         } else {
                                             Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
                                         }

@@ -28,46 +28,6 @@ import kotlinx.coroutines.flow.update
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-
-fun serializePathDataBinary(data: PathData): ByteArray {
-    // bufferSize = id + color(RGBA) + path.size + each Offset point * all points (in bytes)
-    val bufferSize = 8 + 4 * 4 + 4 + data.path.size * 8
-    val buffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
-    buffer.putLong(data.id.toLong())
-    buffer.putFloat(data.color.red.toFloat())
-    buffer.putFloat(data.color.green.toFloat())
-    buffer.putFloat(data.color.blue.toFloat())
-    buffer.putFloat(data.color.alpha.toFloat())
-    buffer.putInt(data.path.size)
-
-    data.path.forEach { offset ->
-        buffer.putFloat(offset.x.toFloat())
-        buffer.putFloat(offset.y.toFloat())
-    }
-
-    return buffer.array()
-
-}
-
-fun deserializePathDataBinary(bytes: ByteArray): PathData {
-    val buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
-    val id = buffer.long.toString()
-    val color = Color(
-        buffer.float,
-        buffer.float,
-        buffer.float,
-        buffer.float
-    )
-    val pathSize = buffer.int
-    val path = mutableListOf<Offset>()
-    repeat(pathSize) {
-        val x = buffer.float
-        val y = buffer.float
-        path.add(Offset(x,y))
-    }
-    return PathData(id, color, path)
-}
-
 @Composable
 fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
 
@@ -99,16 +59,6 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        /*DrawingCanvas(
-            paths = receiverState.paths,
-            currentPath = receiverState.currentPath,
-            // onAction = viewModel::onAction,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-        ) {}*/
-
-
         DrawingCanvas(
             paths = drawingState.paths,
             currentPath = drawingState.currentPath,
@@ -117,9 +67,6 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
                 .fillMaxSize()
                 .weight(1f)
         )
-
-
-
 
         Text(text = "Piirrä: ${word?.word ?: "Ladataan..."}")
 
