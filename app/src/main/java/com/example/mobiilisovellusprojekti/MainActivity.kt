@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
     private val drawingViewModel: DrawingViewModel by viewModels()
     private val gameViewModel: GameViewModel by viewModels()
 
-
+    // Varmuuskopiointi versio ennen tuhoa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
