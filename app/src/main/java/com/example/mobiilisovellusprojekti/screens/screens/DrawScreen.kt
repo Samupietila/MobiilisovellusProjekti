@@ -10,6 +10,10 @@ import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.navigation.NavController
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -91,6 +95,21 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
         bleViewModel.observeNotifications(navController.context, chatViewModel)
     }
 
+=======
+import com.example.mobiilisovellusprojekti.ViewModels.*
+import kotlinx.coroutines.flow.collectLatest
+
+@Composable
+fun DrawScreen(navController: NavController, modifier: Modifier) {
+    val drawingViewModel = viewModel<DrawingViewModel>()
+    val drawingState by drawingViewModel.state.collectAsStateWithLifecycle()
+
+    val wordViewModel = viewModel<WordViewModel>()
+    val word by wordViewModel.randomWord.collectAsState()
+
+    LaunchedEffect(Unit) {
+        wordViewModel.getRandomWord()
+    }
 
     Column(
         modifier = Modifier
@@ -113,20 +132,29 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
             paths = state.paths,
             currentPath = state.currentPath,
             onAction = { action -> drawingViewModel.onAction(action, bleViewModel) },
+        Text(text = "Piirrä: ${word?.word ?: "Ladataan..."}")
+
+        DrawingCanvas(
+            paths = drawingState.paths,
+            currentPath = drawingState.currentPath,
+            onAction = drawingViewModel::onAction,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
         )
         CanvasControls(
-            selectedColor = state.selectedColor,
+            selectedColor = drawingState.selectedColor,
             colors = allColors,
             onSelectColor = {
                 drawingViewModel.onAction(DrawingAction.OnSelectColor(it), bleViewModel)
             },
             onClearCanvas = {
                 drawingViewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
+                drawingViewModel.onAction(DrawingAction.OnSelectColor(it))
             },
-
-            )
+            onClearCanvas = {
+                drawingViewModel.onAction(DrawingAction.OnClearCanvasClick)
+            },
+        )
     }
 }

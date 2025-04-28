@@ -6,4 +6,6 @@ class WordRepository(private val dao: WordDao) {
     suspend fun insert(word: Word) = dao.insert(word)
 
     suspend fun delete(word: Word) = dao.delete(word)
+
+    suspend fun getRandomWord(): Word? = dao.getRandomWord()
 }
