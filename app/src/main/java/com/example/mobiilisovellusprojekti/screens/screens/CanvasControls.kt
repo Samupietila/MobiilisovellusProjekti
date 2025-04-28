@@ -23,6 +23,7 @@ import com.example.mobiilisovellusprojekti.R
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.remember
+import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 
 
@@ -32,7 +33,8 @@ fun ColumnScope.CanvasControls(
     colors: List<DrawingColor>,
     onSelectColor: (DrawingColor) -> Unit,
     onClearCanvas: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    bleViewModel: BleViewModel
 ) {
     Row(
         modifier = modifier
@@ -66,7 +68,10 @@ fun ColumnScope.CanvasControls(
     }
 
     Button(
-        onClick = onClearCanvas,
+        onClick = {
+            onClearCanvas()
+            bleViewModel.clearCanvas()
+        },
         modifier = Modifier
             .padding(11.dp)
             .navigationBarsPadding(),

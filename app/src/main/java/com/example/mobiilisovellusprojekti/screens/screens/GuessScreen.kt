@@ -128,6 +128,7 @@ fun GuessScreen(
                         if (message.isNotBlank()) {
                             guesses = guesses + message
                             println("Submitted guess: $message")
+                            bleViewModel.sendMessage(message, chatViewModel)
                             message = ""
                             focusManager.clearFocus()
                         }

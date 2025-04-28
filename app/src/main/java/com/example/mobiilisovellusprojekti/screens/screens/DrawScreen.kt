@@ -74,7 +74,10 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
 
 
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeChatNotifications(navController.context, chatViewModel, gameViewModel)
+        bleViewModel.observeChatNotifications(
+            navController.context, chatViewModel, gameViewModel,
+            drawViewModel = drawingViewModel
+        )
         bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
     }
 
@@ -137,6 +140,7 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
             onClearCanvas = {
                 drawingViewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
             },
+            bleViewModel = bleViewModel,
         )
     }
 }

@@ -133,6 +133,11 @@ class ChatBleServer(
         // Handle Messages here and what happens next
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
+
+            if (message == "CLEAR_CANVAS") {
+                drawingViewModel.onClearCanvas()
+            }
+
             Log.d("ChatBleServer", "Received message: $message")
             chatViewModel.addMessage(message, isSentByUser = false)
 
@@ -507,7 +512,7 @@ class BleViewModel : ViewModel() {
 
 
 
-    fun observeChatNotifications(context: Context, chatViewModel: ChatViewModel, gameViewModel: GameViewModel) {
+    fun observeChatNotifications(context: Context, chatViewModel: ChatViewModel, gameViewModel: GameViewModel, drawViewModel: DrawingViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             if (!hasBluetoothPermissions(context)) {
@@ -522,6 +527,10 @@ class BleViewModel : ViewModel() {
                             Log.d("BleViewModel", "Notification received: $message")
 
                             // Handle the received message here
+                            if (message == "CLEAR_CANVAS") {
+                                drawViewModel.onClearCanvas()
+                            }
+
                             chatViewModel.addMessage(message, isSentByUser = false)
                             gameViewModel.onNewMessage(message)
 
@@ -584,18 +593,15 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    fun sendMessageToClient(message: String, chatViewModel: ChatViewModel) {
-        if (::chatBleServer.isInitialized) {
-            chatViewModel.addMessage(message, isSentByUser = true)
+    fun sendMessage(message: String, chatViewModel: ChatViewModel) {
+
+        if (isHost.value == true) {
             chatBleServer.sendData(message, viewModelScope)
-        } else {
-            Log.e("BleViewModel", "ChatBleServer is not initialized")
+            chatViewModel.addMessage(message, isSentByUser = true)
+            return
         }
-    }
 
 
-
-    fun sendMessageToServer(message: String, chatViewModel: ChatViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             viewModelScope.launch {
@@ -665,6 +671,14 @@ class BleViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun clearCanvas() {
+        if (isHost.value == true) {
+            chatBleServer.sendData("CLEAR_CANVAS", viewModelScope)
+        } else {
+            sendMessage("CLEAR_CANVAS", ChatViewModel())
         }
     }
 

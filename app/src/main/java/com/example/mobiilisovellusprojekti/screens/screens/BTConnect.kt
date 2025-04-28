@@ -74,7 +74,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
             Button(
                 onClick = { bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel) {
                     bleViewModel.isHost.value = true
-                    navController.navigate(NavigationScreens.DRAWSCREEN.title)
+                    navController.navigate(NavigationScreens.GUESSSCREEN.title)
                 } },
                 enabled = !isScanning,
                 colors = primaryButtonColors(),

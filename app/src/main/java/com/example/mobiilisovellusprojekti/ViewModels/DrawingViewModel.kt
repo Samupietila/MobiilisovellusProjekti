@@ -64,7 +64,7 @@ class DrawingViewModel : ViewModel(){
         }
     }
 
-    private fun onClearCanvas() {
+    fun onClearCanvas() {
         _state.update {
             it.copy(currentPath = null, paths = emptyList())
         }

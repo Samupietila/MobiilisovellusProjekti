@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,14 +34,20 @@ fun GameScreen(
     navController: NavController,
     modifier: Modifier,
     bleViewModel: BleViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
+    gameViewModel: GameViewModel,
+    drawingViewModel: DrawingViewModel
 ) {
     var textInput by remember { mutableStateOf("") }
     val chatMessages by chatViewModel.chatMessages.collectAsState()
     var isSending by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeChatNotifications(navController.context, chatViewModel)
+        bleViewModel.observeChatNotifications(
+            navController.context, chatViewModel,
+            gameViewModel = gameViewModel,
+            drawViewModel = drawingViewModel
+        )
     }
 
     Column(
@@ -75,7 +83,7 @@ fun GameScreen(
                     isSending = true // Set the flag to true before starting the coroutine
                     bleViewModel.viewModelScope.launch {
                         try {
-                            bleViewModel.sendMessageToClient(textInput, chatViewModel) // Pass the textInput to the function
+                            bleViewModel.sendMessage(textInput, chatViewModel) // Pass the textInput to the function
                             textInput = "" // Clear the input field after sending
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -98,7 +106,7 @@ fun GameScreen(
                     isSending = true // Set the flag to true before starting the coroutine
                     bleViewModel.viewModelScope.launch {
                         try {
-                            bleViewModel.sendMessageToServer(textInput, chatViewModel) // Pass the textInput to the function
+                            bleViewModel.sendMessage(textInput, chatViewModel) // Pass the textInput to the function
                             textInput = "" // Clear the input field after sending
                         } catch (e: Exception) {
                             e.printStackTrace()
