@@ -12,8 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.navigation.NavController
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -24,6 +22,7 @@ import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.PathData
+import com.example.mobiilisovellusprojekti.ViewModels.WordViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.allColors
 import kotlinx.coroutines.flow.update
 import java.nio.ByteBuffer
@@ -95,13 +94,7 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
         bleViewModel.observeNotifications(navController.context, chatViewModel)
     }
 
-=======
-import com.example.mobiilisovellusprojekti.ViewModels.*
-import kotlinx.coroutines.flow.collectLatest
 
-@Composable
-fun DrawScreen(navController: NavController, modifier: Modifier) {
-    val drawingViewModel = viewModel<DrawingViewModel>()
     val drawingState by drawingViewModel.state.collectAsStateWithLifecycle()
 
     val wordViewModel = viewModel<WordViewModel>()
@@ -129,19 +122,19 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
 
 
         DrawingCanvas(
-            paths = state.paths,
-            currentPath = state.currentPath,
-            onAction = { action -> drawingViewModel.onAction(action, bleViewModel) },
-        Text(text = "Piirrä: ${word?.word ?: "Ladataan..."}")
-
-        DrawingCanvas(
             paths = drawingState.paths,
             currentPath = drawingState.currentPath,
-            onAction = drawingViewModel::onAction,
+            onAction = { action -> drawingViewModel.onAction(action, bleViewModel) },
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
         )
+
+
+
+
+        Text(text = "Piirrä: ${word?.word ?: "Ladataan..."}")
+
         CanvasControls(
             selectedColor = drawingState.selectedColor,
             colors = allColors,
@@ -150,10 +143,6 @@ fun DrawScreen(navController: NavController, modifier: Modifier) {
             },
             onClearCanvas = {
                 drawingViewModel.onAction((DrawingAction.OnClearCanvasClick), bleViewModel)
-                drawingViewModel.onAction(DrawingAction.OnSelectColor(it))
-            },
-            onClearCanvas = {
-                drawingViewModel.onAction(DrawingAction.OnClearCanvasClick)
             },
         )
     }
