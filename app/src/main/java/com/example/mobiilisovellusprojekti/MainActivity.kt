@@ -26,6 +26,8 @@ class MainActivity : ComponentActivity() {
     private val chatViewModel: ChatViewModel by viewModels()
     private val drawingViewModel: DrawingViewModel by viewModels()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

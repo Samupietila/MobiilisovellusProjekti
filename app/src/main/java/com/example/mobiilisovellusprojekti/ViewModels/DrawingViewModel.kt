@@ -116,11 +116,11 @@ class DrawingViewModel : ViewModel(){
     }
 
     //testaamiseen ilman bluetoothia tarkoitettu
-    fun updatePaths(newPaths: List<PathData>) {
+    fun updatePaths(newPaths: PathData) {
         Log.d("DWM", "updatePaths triggered")
         Log.d("DWM",newPaths.toString())
 
-        _state.update { it.copy(paths = newPaths) }
+        _state.update { it.copy(paths = it.paths + newPaths) }
     }
 
     // byte serialisaatio

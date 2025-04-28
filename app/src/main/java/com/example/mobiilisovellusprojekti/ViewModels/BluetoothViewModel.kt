@@ -151,7 +151,7 @@ class ChatBleServer(
                 newPaths.add(convertedValue)
 
 
-                drawingViewModel.updatePaths(newPaths)
+                drawingViewModel.updatePaths(convertedValue)
 
                 // TODO: Handle the received coordinates here
                 /*drawingViewModel.updatePaths()*/

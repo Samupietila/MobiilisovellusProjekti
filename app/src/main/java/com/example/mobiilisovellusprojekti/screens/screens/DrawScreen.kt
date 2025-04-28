@@ -70,26 +70,11 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 
 @Composable
 fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
-    val state by drawingViewModel.state.collectAsStateWithLifecycle()
 
 
-    /*LaunchedEffect(state.paths) {
-        Log.d("DBG", "LauchEffect launched")
-        Log.d("DBG", "${state.paths.isNotEmpty()}")
-        //if (state.paths.isNotEmpty()) {
-            val serialized = state.paths.map { serializePathDataBinary(it) }
-            val receivedPaths = serialized.map { deserializePathDataBinary(it) }
 
 
-            receiverViewModel.updatePaths(receivedPaths)
-        //}
-    }*/
 
-
-    LaunchedEffect(state.paths) {
-        Log.d("DS","Composed")
-        Log.d("DS",state.paths.toString())
-    }
     LaunchedEffect(key1 = bleViewModel) {
         bleViewModel.observeNotifications(navController.context, chatViewModel)
     }
@@ -99,6 +84,11 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
 
     val wordViewModel = viewModel<WordViewModel>()
     val word by wordViewModel.randomWord.collectAsState()
+
+    LaunchedEffect(drawingState.paths) {
+        Log.d("DS","Composed")
+        Log.d("DS",drawingState.paths.toString())
+    }
 
     LaunchedEffect(Unit) {
         wordViewModel.getRandomWord()

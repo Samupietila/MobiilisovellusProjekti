@@ -15,6 +15,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
@@ -62,13 +65,20 @@ val mockPathDataList = listOf(
 @Composable
 fun GuessScreen(
     modifier: Modifier = Modifier,
-    viewModel: DrawingViewModel = viewModel()
+    drawingViewModel: DrawingViewModel,
+    navController: NavController,
+    bleViewModel: BleViewModel,
+    chatViewModel: ChatViewModel
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by drawingViewModel.state.collectAsStateWithLifecycle()
     var message by remember { mutableStateOf("") }
     var guesses by remember { mutableStateOf(listOf<String>()) }
     var isDarkTheme by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = bleViewModel) {
+        bleViewModel.observeNotifications(navController.context, chatViewModel)
+    }
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
         val colors = MaterialTheme.colorScheme
@@ -89,8 +99,8 @@ fun GuessScreen(
                     .background(Color.White)
             ) {
                 DrawingCanvas(
-                    paths = mockPathDataList,
-                    currentPath = null,
+                    paths = state.paths,
+                    currentPath = state.currentPath,
                     onAction = {},
                     modifier = Modifier.fillMaxSize()
                 )
