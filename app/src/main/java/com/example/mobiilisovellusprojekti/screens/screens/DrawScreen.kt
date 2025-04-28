@@ -21,6 +21,7 @@ import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingAction
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import com.example.mobiilisovellusprojekti.ViewModels.WordViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.allColors
@@ -69,11 +70,11 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 }
 
 @Composable
-fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
+fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
 
 
     LaunchedEffect(key1 = bleViewModel) {
-        bleViewModel.observeChatNotifications(navController.context, chatViewModel)
+        bleViewModel.observeChatNotifications(navController.context, chatViewModel, gameViewModel)
         bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
     }
 
@@ -90,6 +91,10 @@ fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: B
 
     LaunchedEffect(Unit) {
         wordViewModel.getRandomWord()
+    }
+
+    LaunchedEffect(word) {
+        word?.word?.let { gameViewModel.setWord(it) }
     }
 
     Column(

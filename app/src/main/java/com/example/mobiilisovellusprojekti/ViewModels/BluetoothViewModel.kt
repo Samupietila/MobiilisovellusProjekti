@@ -265,7 +265,7 @@ class ChatBleServer(
     }
 
     fun sendCoordinates(drawingState: DrawingState, viewModelScope: CoroutineScope, drawingViewModel: DrawingViewModel) {
-        val connectedDevices = _connectedDevices // List of connected devices
+        val connectedDevices = _connectedDevices
 
         if (connectedDevices.isEmpty()) {
             Log.e("ChatBleServer", "No connected devices to send data to")
@@ -507,7 +507,7 @@ class BleViewModel : ViewModel() {
 
 
 
-    fun observeChatNotifications(context: Context, chatViewModel: ChatViewModel) {
+    fun observeChatNotifications(context: Context, chatViewModel: ChatViewModel, gameViewModel: GameViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             if (!hasBluetoothPermissions(context)) {
@@ -523,6 +523,7 @@ class BleViewModel : ViewModel() {
 
                             // Handle the received message here
                             chatViewModel.addMessage(message, isSentByUser = false)
+                            gameViewModel.onNewMessage(message)
 
                         }
                         .launchIn(this)
@@ -552,9 +553,9 @@ class BleViewModel : ViewModel() {
                         .onEach { data ->
                             val byteArray = data.value
 
-                            // Extract the flag and the actual chunk
-                            val isLastChunk = byteArray[0] == 1.toByte() // First byte is the flag
-                            val chunk = byteArray.copyOfRange(1, byteArray.size) // Remaining bytes are the data
+
+                            val isLastChunk = byteArray[0] == 1.toByte()
+                            val chunk = byteArray.copyOfRange(1, byteArray.size)
 
                             // Add the chunk to the buffer
                             receivedChunks.add(chunk)
