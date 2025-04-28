@@ -129,19 +129,18 @@ class DrawingViewModel : ViewModel(){
         val bufferSize = 8 + 4 * 4 + 4 + data.path.size * 8
         val buffer = ByteBuffer.allocate(bufferSize).order(ByteOrder.LITTLE_ENDIAN)
         buffer.putLong(data.id.toLong())
-        buffer.putFloat(data.color.red.toFloat())
-        buffer.putFloat(data.color.green.toFloat())
-        buffer.putFloat(data.color.blue.toFloat())
-        buffer.putFloat(data.color.alpha.toFloat())
+        buffer.putFloat(data.color.red)
+        buffer.putFloat(data.color.green)
+        buffer.putFloat(data.color.blue)
+        buffer.putFloat(data.color.alpha)
         buffer.putInt(data.path.size)
 
         data.path.forEach { offset ->
-            buffer.putFloat(offset.x.toFloat())
-            buffer.putFloat(offset.y.toFloat())
+            buffer.putFloat(offset.x)
+            buffer.putFloat(offset.y)
         }
 
         return buffer.array()
-
     }
 
     // deserialisointi
@@ -149,10 +148,10 @@ class DrawingViewModel : ViewModel(){
         val buffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)
         val id = buffer.long.toString()
         val color = Color(
-            buffer.float.toInt(),
-            buffer.float.toInt(),
-            buffer.float.toInt(),
-            buffer.float.toInt()
+            buffer.float,
+            buffer.float,
+            buffer.float,
+            buffer.float
         )
         val pathSize = buffer.int
         val path = mutableListOf<Offset>()
