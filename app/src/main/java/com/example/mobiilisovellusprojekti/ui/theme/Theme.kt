@@ -15,7 +15,7 @@ val DarkColorPalette = darkColorScheme(
     primary = Color(0xFFE6EEEF),
     secondary = Color(0xFF636FC2),
     tertiary = Color(0xFFE37676),
-    background = Color(0xFF000000),
+    background = Color(0xFF1A1A1A),
     surface = Color(0xFF292B3B),
     onPrimary = Color.Black,
     onSecondary = Color.Black,
@@ -57,7 +57,7 @@ val AppTypography = Typography(
 @Composable
 fun MobiilisovellusProjektiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

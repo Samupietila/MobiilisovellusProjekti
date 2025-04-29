@@ -47,9 +47,9 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         navController = navController,
         startDestination = NavigationScreens.TEST.title
     ) {
-      
-        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
-        composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
+
+        composable(NavigationScreens.WORD.title) { WordScreen(navController, modifier) }
+        composable(NavigationScreens.HOME.title) { Home(navController, modifier) }
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(navController, modifier) }
@@ -59,7 +59,26 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
         composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
         composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
-        composable(NavigationScreens.GUESS.title) { GuessScreen(modifier) }
 
+        // Handle both Back to Home and Play Again button navigation
+        composable(NavigationScreens.GUESS.title) {
+            GuessScreen(
+                modifier = modifier,
+                onBackToHome = {
+                    // Navigate back to Home when "Back to Home" is pressed
+                    navController.navigate(NavigationScreens.HOME.title) {
+                        // Pop the back stack to avoid going back to the Guess screen
+                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                    }
+                },
+                onPlayAgain = {
+                    // Navigate to BTConnect when "Play Again" is pressed
+                    navController.navigate(NavigationScreens.BTCONNECT.title) {
+                        // Pop the back stack to avoid going back to the Guess screen
+                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }
