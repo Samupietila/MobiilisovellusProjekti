@@ -1,5 +1,6 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -46,7 +47,6 @@ fun GuessScreen(
     gameViewModel: GameViewModel
 ) {
     val state by drawingViewModel.state.collectAsStateWithLifecycle()
-
     val gameOver = gameViewModel.gameOver.collectAsState()
     var message by remember { mutableStateOf("") }
     var guesses by remember { mutableStateOf(listOf<String>()) }
@@ -55,6 +55,10 @@ fun GuessScreen(
 
     LaunchedEffect(key1 = bleViewModel) {
         bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
+    }
+
+    LaunchedEffect(gameOver.value) {
+        Log.d("LE - gameOver", gameOver.value.toString())
     }
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
@@ -215,6 +219,7 @@ fun GuessScreen(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             if (message.isNotBlank()) {
+                                bleViewModel.sendMessage(message, chatViewModel)
                                 guesses = guesses + message
                                 message = ""
                                 focusManager.clearFocus()
@@ -226,9 +231,9 @@ fun GuessScreen(
                 Button(
                     onClick = {
                         if (message.isNotBlank()) {
+                            bleViewModel.sendMessage(message, chatViewModel)
                             guesses = guesses + message
                             println("Submitted guess: $message")
-                            bleViewModel.sendMessage(message, chatViewModel)
                             message = ""
                             focusManager.clearFocus()
                         }

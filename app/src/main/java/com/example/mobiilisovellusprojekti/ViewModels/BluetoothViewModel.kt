@@ -125,7 +125,7 @@ class ChatBleServer(
 
 
     // SET UP THE DATA HERE
-    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
+    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
 
         // Search for Charasteristic
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
@@ -137,6 +137,8 @@ class ChatBleServer(
             if (message == "CLEAR_CANVAS") {
                 drawingViewModel.onClearCanvas()
             }
+
+            gameViewModel.onNewMessage(message)
 
             Log.d("ChatBleServer", "Received message: $message")
             chatViewModel.addMessage(message, isSentByUser = false)
@@ -182,14 +184,14 @@ class ChatBleServer(
     }
 
 
-    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
+    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,gameViewModel: GameViewModel ,onDeviceConnected: () -> Unit) {
         server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
             .map { it.connection }
             .onEach { connection ->
                 _connectedDevices.add(ServerConnectionEvent.DeviceConnected(connection))
                 connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
-                    setUpServices(service, viewModelScope, chatViewModel, drawingViewModel)
+                    setUpServices(service, viewModelScope, chatViewModel, drawingViewModel, gameViewModel)
 
                     // Notify the devices that connection has been established
                     onDeviceConnected()
@@ -263,9 +265,9 @@ class ChatBleServer(
         }
     }
 
-    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
+    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,gameViewModel: GameViewModel ,onDeviceConnected: () -> Unit) {
         declareServer(context, viewModelScope) { server ->
-            observeConnections(server, viewModelScope, chatViewModel, drawingViewModel,onDeviceConnected)
+            observeConnections(server, viewModelScope, chatViewModel, drawingViewModel,gameViewModel, onDeviceConnected)
         }
     }
 
@@ -423,9 +425,9 @@ class BleViewModel : ViewModel() {
 
 
 
-    fun startAdvertising(context: Context, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel ,onDeviceConnected: () -> Unit) {
+    fun startAdvertising(context: Context, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel,onDeviceConnected: () -> Unit) {
         if (::chatBleServer.isInitialized) {
-            chatBleServer.startServer(context, viewModelScope, chatViewModel,drawingViewModel,onDeviceConnected)
+            chatBleServer.startServer(context, viewModelScope, chatViewModel,drawingViewModel,gameViewModel,onDeviceConnected)
             isAdvertising.value = true
             Log.d("DBG?","${isAdvertising.value}")
             chatBleServer.startAdvertising()

@@ -53,7 +53,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
 
         composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier, isDarkTheme) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier, isDarkTheme)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel, isDarkTheme) }
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel, gameViewModel,isDarkTheme) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier, isDarkTheme) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(
             navController, modifier, bleViewModel, chatViewModel, drawingViewModel,

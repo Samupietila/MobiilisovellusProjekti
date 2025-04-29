@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
 import java.util.UUID
 import kotlin.text.compareTo
 import kotlin.toString
@@ -40,6 +41,7 @@ fun BTConnect(navController: NavController,
               bleViewModel: BleViewModel,
               chatViewModel: ChatViewModel,
               drawingViewModel: DrawingViewModel,
+              gameViewModel: GameViewModel,
               isDarkTheme: Boolean
 ) {
 
@@ -90,7 +92,8 @@ fun BTConnect(navController: NavController,
             // Host Button
             Button(
                 onClick = {
-                    bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel) {
+                    bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel, gameViewModel) {
+                        bleViewModel.isHost.value = true
                         navController.navigate(NavigationScreens.GUESSSCREEN.title)
                     }
                 },
