@@ -42,17 +42,17 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(libs.androidx.core)
-    androidTestImplementation(libs.androidx.junit.v115)
+    //androidTestImplementation(libs.androidx.core)
+    //androidTestImplementation(libs.androidx.junit.v115)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.room.testing)
+    //androidTestImplementation(libs.androidx.room.testing)
 
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
-    testImplementation(libs.androidx.core)
+    //testImplementation(libs.androidx.core)
     
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
@@ -65,7 +65,10 @@ dependencies {
     implementation (libs.server)
 
     // Serialization
-    implementation(libs.kotlinx.serialization.json)
+    //implementation(libs.kotlinx.serialization.json)
+
+
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

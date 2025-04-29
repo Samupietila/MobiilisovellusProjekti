@@ -1,10 +1,17 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.AdvertiseData
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.ParcelUuid
+import android.provider.ContactsContract
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,6 +41,8 @@ import no.nordicsemi.android.kotlin.ble.core.advertiser.ManufacturerData
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattPermission
 import no.nordicsemi.android.kotlin.ble.core.data.BleGattProperty
 import no.nordicsemi.android.kotlin.ble.core.data.util.DataByteArray
+import no.nordicsemi.android.kotlin.ble.core.scanner.BleScanFilter
+import no.nordicsemi.android.kotlin.ble.core.scanner.FilteredServiceUuid
 import no.nordicsemi.android.kotlin.ble.scanner.BleScanner
 import no.nordicsemi.android.kotlin.ble.scanner.aggregator.BleScanResultAggregator
 import no.nordicsemi.android.kotlin.ble.server.main.ServerBleGatt
@@ -56,8 +65,6 @@ class ChatBleServer(
     chatViewModel: ChatViewModel
 ) {
 
-
-    // List of connections connected to the server
     private val _connectedDevices = mutableListOf<ServerConnectionEvent.DeviceConnected>()
     val connectedDevices: List<ServerConnectionEvent.DeviceConnected>
         get() = _connectedDevices
@@ -65,23 +72,15 @@ class ChatBleServer(
     private val _state = MutableStateFlow(AdvertisingState(isAdvertising = false))
     val state: StateFlow<AdvertisingState> = _state
 
-
-    // Creating advertiser object
     private val advertiser = BleAdvertiser.create(context)
     val advertiserConfig = BleAdvertisingConfig(
         settings = BleAdvertisingSettings(
-            deviceName = "Guess my doodle",
+            deviceName = "Doodle",
             anonymous = false,
         ),
         advertiseData = BleAdvertisingData(
             serviceUuid = ParcelUuid(BleViewModel.GAME_UUID),
             includeDeviceName = true,
-            manufacturerData = listOf(
-                ManufacturerData(
-                    id = 69,
-                    data = DataByteArray("Hello Samu".toByteArray())
-                )
-            )
         )
     )
 
@@ -91,27 +90,34 @@ class ChatBleServer(
         onServerCreated: (ServerBleGatt) -> Unit
     ) {
         viewModelScope.launch {
-
-            // Define the servers charasteristic configuration on what will be used
-            val serverCharasteristics = ServerBleGattCharacteristicConfig(
-                BleViewModel.CHARACTERISTIC_UUID, // UUID for the charasteristic
+            val messageCharasteristics = ServerBleGattCharacteristicConfig(
+                BleViewModel.CHARACTERISTIC_UUID,
                 listOf(
                     BleGattProperty.PROPERTY_READ,
                     BleGattProperty.PROPERTY_WRITE,
                     BleGattProperty.PROPERTY_NOTIFY),
                 listOf(
                     BleGattPermission.PERMISSION_READ,
-                    BleGattPermission.PERMISSION_WRITE) // What kind of permissions are given for the user connected to the server
+                    BleGattPermission.PERMISSION_WRITE)
             )
 
-            // Defining server's configuration
+            val coordinatesCharasteristics = ServerBleGattCharacteristicConfig(
+                BleViewModel.COORDINATES_UUID,
+                listOf(
+                    BleGattProperty.PROPERTY_READ,
+                    BleGattProperty.PROPERTY_WRITE,
+                    BleGattProperty.PROPERTY_NOTIFY),
+                listOf(
+                    BleGattPermission.PERMISSION_READ,
+                    BleGattPermission.PERMISSION_WRITE)
+            )
+
             val serverConfig = ServerBleGattServiceConfig(
                 BleViewModel.SERVICE_UUID,
                 ServerBleGattServiceType.SERVICE_TYPE_PRIMARY,
-                listOf(serverCharasteristics)
+                listOf(messageCharasteristics, coordinatesCharasteristics)
             )
 
-            // Creating the actual server
             val server = ServerBleGatt.create(context, this, serverConfig)
             onServerCreated(server)
         }
@@ -119,48 +125,89 @@ class ChatBleServer(
 
 
     // SET UP THE DATA HERE
-    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel) {
+    fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
 
-        // Define the charasteristic whose data will be defined
+        // Search for Charasteristic
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
-        // Lambda on what will happen when the charasteristic gest written
+        // Handle Messages here and what happens next
         messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
+
+            if (message == "CLEAR_CANVAS") {
+                drawingViewModel.onClearCanvas()
+            }
+
             Log.d("ChatBleServer", "Received message: $message")
             chatViewModel.addMessage(message, isSentByUser = false)
 
+            // Add the function to check if the guess was correct
 
         }?.launchIn(viewModelScope)
+
+        // Search for Charasteristic
+        val coordinatesCharasteristics = services.findCharacteristic(BleViewModel.COORDINATES_UUID)
+
+        val receivedChunks = mutableListOf<ByteArray>()
+
+        // Handle Coordinate and what happens here
+        coordinatesCharasteristics?.value?.onEach { data ->
+            try {
+                Log.d("ChatBleServer", "Received coordinates characteristic: ${data.toString()}")
+                Log.d("ChatBleServer", "Received coordinates data: ${data.value}")
+
+                // Extract the flag and the actual chunk
+                val isLastChunk = data.value[0] == 1.toByte()
+                val chunk = data.value.copyOfRange(1, data.value.size)
+
+                // Add the chunk to the list
+                receivedChunks.add(chunk)
+
+                // If it's the last chunk, reassemble and process the data
+                if (isLastChunk) {
+                    val completeData = receivedChunks.reduce { acc, bytes -> acc + bytes }
+                    receivedChunks.clear() // Clear the buffer
+
+                    // Deserialize and update paths
+                    val convertedValue = drawingViewModel.deserializePathDataBinary(completeData)
+                    drawingViewModel.updatePaths(convertedValue)
+                }
+
+
+            } catch (e: Exception) {
+                Log.e("ChatBleServer", "Failed to deserialize coordinates: ${e.message}")
+            }
+        }?.launchIn(viewModelScope)
+
     }
 
 
-    // When a connection is established what will happen is defined in this function
-    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
+    fun observeConnections(server: ServerBleGatt, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
         server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
             .map { it.connection }
             .onEach { connection ->
                 _connectedDevices.add(ServerConnectionEvent.DeviceConnected(connection))
                 connection.services.findService(BleViewModel.SERVICE_UUID)?.let { service ->
-                    setUpServices(service, viewModelScope, chatViewModel)
+                    setUpServices(service, viewModelScope, chatViewModel, drawingViewModel)
 
-                    // Notify the devices that connection has been established. In this case move into the next screen
+                    // Notify the devices that connection has been established
                     onDeviceConnected()
                 }
             }.launchIn(viewModelScope)
     }
 
-    // Starting the advertisement of the server
     fun startAdvertising() {
         val requiredPermissions =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 arrayOf(
-                    android.Manifest.permission.BLUETOOTH_ADVERTISE,
-                    android.Manifest.permission.BLUETOOTH_CONNECT
+                    Manifest.permission.BLUETOOTH_ADVERTISE,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_ADMIN
                 )
             } else {
-                arrayOf(android.Manifest.permission.BLUETOOTH)
+                arrayOf(Manifest.permission.BLUETOOTH)
             }
 
         val missingPermissions = requiredPermissions.filter {
@@ -168,13 +215,19 @@ class ChatBleServer(
         }
 
         if (missingPermissions.isNotEmpty()) {
+            startAdvertisingProcess()
             Log.e(
                 "ChatBleServer",
                 "Missing required Bluetooth permissions: $missingPermissions"
             )
-            return
+        } else {
+            // Oikeudet ovat kunnossa, aloita mainostaminen
+            startAdvertisingProcess()
         }
 
+        }
+
+    private fun startAdvertisingProcess(){
         try {
             Log.d("ChatBleServer", "Starting Advertiser")
             coroutineScope.launch {
@@ -186,6 +239,12 @@ class ChatBleServer(
                             is OnAdvertisingSetStarted -> {
                                 _state.value = _state.value.copy(isAdvertising = true)
                                 Log.d("ChatBleServer", "Advertising started")
+                                Log.d("DBG", "${Build.VERSION.SDK_INT} & ${Build.VERSION_CODES.S}")
+                                Log.d("DBG!", "AdvertiseData serviceUuid: ${advertiserConfig.advertiseData?.serviceUuid}")
+                                Log.d("DBG", "Advertising with UUID: ${BleViewModel.GAME_UUID}")
+                                Log.d("DBG!","${advertiser}")
+                                Log.d("DBG!","$connectedDevices")
+                                Log.d("DBG!","${advertiserConfig.advertiseData}")
                             }
 
                             is OnAdvertisingSetStopped -> {
@@ -204,13 +263,64 @@ class ChatBleServer(
         }
     }
 
-    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, onDeviceConnected: () -> Unit) {
+    fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel,onDeviceConnected: () -> Unit) {
         declareServer(context, viewModelScope) { server ->
-            observeConnections(server, viewModelScope, chatViewModel,onDeviceConnected)
+            observeConnections(server, viewModelScope, chatViewModel, drawingViewModel,onDeviceConnected)
         }
     }
 
-    // Function to send data and notify the clients that are connected to the server
+    fun sendCoordinates(drawingState: DrawingState, viewModelScope: CoroutineScope, drawingViewModel: DrawingViewModel) {
+        val connectedDevices = _connectedDevices
+
+        if (connectedDevices.isEmpty()) {
+            Log.e("ChatBleServer", "No connected devices to send data to")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                connectedDevices.forEach { device ->
+                    val service = device.connection.services.findService(BleViewModel.SERVICE_UUID)
+                    val characteristic = service?.findCharacteristic(BleViewModel.COORDINATES_UUID)
+
+                    if (characteristic != null) {
+                        val coordinate = drawingState.paths.last()
+                        Log.d("SendCoordinates message: ", coordinate.path.toString())
+
+                        if (coordinate != null) {
+                            Log.d("SendCoordinates message: ", "We are inside if")
+                            val byteData = drawingViewModel.serializePathDataBinary(coordinate)
+
+                            // Chunking data
+                            val chunkSize = 500
+                            val totalChunks = (byteData.size + chunkSize - 1) / chunkSize
+                            for (i in 0 until totalChunks) {
+                                val start = i * chunkSize
+                                val end = minOf(start + chunkSize, byteData.size)
+                                val chunk = byteData.copyOfRange(start, end)
+
+                                // Add a flag to indicate if this is the last chunk
+                                val isLastChunk = (i == totalChunks - 1)
+                                val chunkWithFlag = ByteArray(chunk.size + 1).apply {
+                                    this[0] = if (isLastChunk) 1 else 0 // 1 for last chunk, 0 otherwise
+                                    System.arraycopy(chunk, 0, this, 1, chunk.size)
+                                }
+
+                                characteristic.setValueAndNotifyClient(DataByteArray(chunkWithFlag))
+                            }
+                        }
+
+                        Log.d("ChatBleServer", "Coordinate sent to device: ${device.connection.device.address}")
+                    } else {
+                        Log.e("ChatBleServer", "Characteristic not found for device: ${device.connection.device.address}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ChatBleServer", "Failed to send data: ${e.message}")
+            }
+        }
+    }
+
     fun sendData(message: String, viewModelScope: CoroutineScope) {
         val connectedDevices = _connectedDevices // List of connected devices
         if (connectedDevices.isEmpty()) {
@@ -260,8 +370,14 @@ class BleViewModel : ViewModel() {
         // SERVICE_UUID to find the service we are looking for
         val SERVICE_UUID = UUID.fromString("b7ceba11-2542-477f-a2a3-f8012d6ce13c")
 
+
+        // Messages
         // Characteristic UUID = Where the data will be located at
         val CHARACTERISTIC_UUID: UUID = UUID.fromString("9c0cd23f-44c1-4d3d-aaa3-7678bf19a218")
+
+        // Canvas
+        // Coordinates UUID to where the canvas coordinates will be placed
+        val COORDINATES_UUID: UUID = UUID.fromString("ba598b1a-2458-48fb-ae8d-ed71b4760cdf")
     }
 
 
@@ -280,9 +396,15 @@ class BleViewModel : ViewModel() {
         get() = _connection
 
     // To save the Charasteristic
-    private var _charasteristic: ClientBleGattCharacteristic? = null
+    private var _characteristic: ClientBleGattCharacteristic? = null
     val connectionCharasteristic: ClientBleGattCharacteristic?
-        get() = _charasteristic
+        get() = _characteristic
+
+
+    // Coordinates Charasteristic
+    private var _coordCharasteristic: ClientBleGattCharacteristic? = null
+    val coordinateCharasteristic: ClientBleGattCharacteristic?
+        get() = _coordCharasteristic
 
     val advertisingState: StateFlow<AdvertisingState>
         get() = if (::chatBleServer.isInitialized) {
@@ -296,10 +418,16 @@ class BleViewModel : ViewModel() {
     val isAdvertising = MutableLiveData(false)
     val connectionState = MutableLiveData<String>()
 
-    fun startAdvertising(context: Context, chatViewModel: ChatViewModel ,onDeviceConnected: () -> Unit) {
+    // Role of the device
+    val isHost = mutableStateOf(false)
+
+
+
+    fun startAdvertising(context: Context, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel ,onDeviceConnected: () -> Unit) {
         if (::chatBleServer.isInitialized) {
-            chatBleServer.startServer(context, viewModelScope, chatViewModel,onDeviceConnected)
+            chatBleServer.startServer(context, viewModelScope, chatViewModel,drawingViewModel,onDeviceConnected)
             isAdvertising.value = true
+            Log.d("DBG?","${isAdvertising.value}")
             chatBleServer.startAdvertising()
         } else {
             Log.e("BleViewModel", "ChatBleServer is not initialized")
@@ -307,10 +435,10 @@ class BleViewModel : ViewModel() {
     }
 
     fun scanDevices(context: Context) {
-        val permission = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            android.Manifest.permission.BLUETOOTH_SCAN
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Manifest.permission.BLUETOOTH_SCAN
         } else {
-            android.Manifest.permission.BLUETOOTH
+            Manifest.permission.BLUETOOTH
         }
 
         if (ContextCompat.checkSelfPermission(
@@ -321,21 +449,24 @@ class BleViewModel : ViewModel() {
             val aggregator = BleScanResultAggregator()
             isScanning.value = true
 
-            val serviceUuid = no.nordicsemi.android.kotlin.ble.core.scanner.FilteredServiceUuid(
+            val serviceUuid = FilteredServiceUuid(
                 uuid = ParcelUuid(GAME_UUID)
             )
 
-            val scanFilter = no.nordicsemi.android.kotlin.ble.core.scanner.BleScanFilter(
+            val scanFilter = BleScanFilter(
                 serviceUuid = serviceUuid
             )
-
+            Log.d("DBG", "scanning for $scanFilter")
             BleScanner(context).scan(listOf(scanFilter))
                 .map { aggregator.aggregateDevices(it) }
                 .onEach {
                     scanResults.value = it
-                    Log.d("onEach", "${it.toString()}")
-                    it.forEach { }
                     isScanning.value = false
+                            it.forEach { device ->
+                                //val services = device.services.map { it.uuid.toString() }
+                                //Log.d("DBG", "Found device: ${device.name}, services: ${device.bondState}")
+                        }
+
                 }
                 .launchIn(viewModelScope)
         } else {
@@ -350,19 +481,27 @@ class BleViewModel : ViewModel() {
 
             connection.requestMtu(512)
 
-            val service = services.findService(BleViewModel.SERVICE_UUID)
+            val service = services.findService(SERVICE_UUID)
             if (service == null) {
                 Log.e("ConnectToDevice", "service was not found")
                 return false
             }
 
-            val charasteristic = service.findCharacteristic(CHARACTERISTIC_UUID)
-            if (charasteristic == null) {
-                Log.e("ConnectToDevice", "No charasteristic found")
+            val characteristic = service.findCharacteristic(CHARACTERISTIC_UUID)
+            if (characteristic == null) {
+                Log.e("ConnectToDevice", "No message characteristic found")
                 return false
             }
+
+            val coordinates = service.findCharacteristic(COORDINATES_UUID)
+            if (coordinates == null) {
+                Log.e("ConnectToDevice", "No coordiante characteristic found")
+                return false
+            }
+
             _connection = connection
-            _charasteristic = charasteristic
+            _characteristic = characteristic
+            _coordCharasteristic = coordinates
             connectionState.postValue("Connected to ${device.name ?: "Unknown"}")
         } catch (e: Exception) {
             connectionState.postValue("Failed to connect to ${device.name ?: "Unknown"}: ${e.message}")
@@ -371,7 +510,9 @@ class BleViewModel : ViewModel() {
         return true
     }
 
-    fun observeNotifications(context: Context, chatViewModel: ChatViewModel) {
+
+
+    fun observeChatNotifications(context: Context, chatViewModel: ChatViewModel, gameViewModel: GameViewModel, drawViewModel: DrawingViewModel) {
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             if (!hasBluetoothPermissions(context)) {
@@ -386,7 +527,12 @@ class BleViewModel : ViewModel() {
                             Log.d("BleViewModel", "Notification received: $message")
 
                             // Handle the received message here
+                            if (message == "CLEAR_CANVAS") {
+                                drawViewModel.onClearCanvas()
+                            }
+
                             chatViewModel.addMessage(message, isSentByUser = false)
+                            gameViewModel.onNewMessage(message)
 
                         }
                         .launchIn(this)
@@ -399,18 +545,63 @@ class BleViewModel : ViewModel() {
         }
     }
 
+    fun observeCordinateNotifications(context: Context, drawingViewModel: DrawingViewModel) {
+        val characteristic = coordinateCharasteristic
+        if (characteristic != null) {
+            if (!hasBluetoothPermissions(context)) {
+                Log.e("BleViewModel", "Missing required Bluetooth permissions")
+                return
+            }
 
-    // Ei toimi??
-    fun sendMessageToClient(message: String, chatViewModel: ChatViewModel) {
-        if (::chatBleServer.isInitialized) {
-            chatViewModel.addMessage(message, isSentByUser = true)
-            chatBleServer.sendData(message, viewModelScope)
+            // When receiving the data
+            val receivedChunks = mutableListOf<ByteArray>()
+
+            viewModelScope.launch {
+                try {
+                    characteristic.getNotifications()
+                        .onEach { data ->
+                            val byteArray = data.value
+
+
+                            val isLastChunk = byteArray[0] == 1.toByte()
+                            val chunk = byteArray.copyOfRange(1, byteArray.size)
+
+                            // Add the chunk to the buffer
+                            receivedChunks.add(chunk)
+
+                            // If it's the last chunk, reassemble and process the data
+                            if (isLastChunk) {
+                                val completeData = receivedChunks.reduce { acc, bytes -> acc + bytes }
+                                receivedChunks.clear() // Clear the buffer
+
+                                // Deserialize and process the complete data
+                                val coordinate = drawingViewModel.deserializePathDataBinary(completeData)
+                                Log.d("BleViewModel", "Notification received: $coordinate")
+
+                                // Add the data into the drawingViewModel
+                                drawingViewModel.updatePaths(coordinate)
+
+                            }
+                        }
+                        .launchIn(this)
+                } catch (e: Exception) {
+                    Log.e("BleViewModel", "Failed to observe notifications: ${e.message}")
+                }
+            }
         } else {
-            Log.e("BleViewModel", "ChatBleServer is not initialized")
+            Log.e("BleViewModel", "Characteristic not found to observe notifications")
         }
     }
 
-    fun sendMessageToServer(message: String, chatViewModel: ChatViewModel) {
+    fun sendMessage(message: String, chatViewModel: ChatViewModel) {
+
+        if (isHost.value == true) {
+            chatBleServer.sendData(message, viewModelScope)
+            chatViewModel.addMessage(message, isSentByUser = true)
+            return
+        }
+
+
         val characteristic = connectionCharasteristic
         if (characteristic != null) {
             viewModelScope.launch {
@@ -429,6 +620,67 @@ class BleViewModel : ViewModel() {
         }
     }
 
+
+
+    fun sendCoordinatesToServer( drawingState: DrawingState, drawingViewModel: DrawingViewModel) {
+
+        if (isHost.value == true) {
+
+            chatBleServer.sendCoordinates(
+                drawingState = drawingState,
+                viewModelScope = viewModelScope,
+                drawingViewModel = drawingViewModel
+            )
+
+        } else {
+            Log.d("sendCoordinatesToServer", "Sending coordinates to server")
+            val characteristic = coordinateCharasteristic
+            if (characteristic != null) {
+                viewModelScope.launch {
+                    try {
+                        val coordinate = drawingState.paths.last()
+                        Log.d("Cord", coordinate.toString())
+                            // serialisoidaan, en oo tehny mitää vastaanottamiseen
+                            val byteData = drawingViewModel.serializePathDataBinary(coordinate)
+
+                            // Chunking data
+                            val totalChunks = (byteData.size + 500 - 1) / 500
+                            for (i in 0 until totalChunks) {
+                                val start = i * 500
+                                val end = minOf(start + 500, byteData.size)
+                                val chunk = byteData.copyOfRange(start, end)
+
+                                // Add a flag to indicate if this is the last chunk
+                                val isLastChunk = (i == totalChunks - 1)
+                                val chunkWithFlag = ByteArray(chunk.size + 1).apply {
+                                    this[0] = if (isLastChunk) 1 else 0 // 1 for last chunk, 0 otherwise
+                                    System.arraycopy(chunk, 0, this, 1, chunk.size)
+                                }
+
+                                characteristic.write(DataByteArray(chunkWithFlag))
+                            }
+
+                            Log.d(
+                                "sendCoordinatesToServer",
+                                "Coordinate ${coordinate.id} sent to server"
+                            )
+
+                    } catch (e: Exception) {
+                        Log.e("sendCoordinatesToServer", "Failed to send coordinates to server")
+                        Log.e("sendCoordinatesToServer", "${e.message}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun clearCanvas() {
+        if (isHost.value == true) {
+            chatBleServer.sendData("CLEAR_CANVAS", viewModelScope)
+        } else {
+            sendMessage("CLEAR_CANVAS", ChatViewModel())
+        }
+    }
 
 
 
