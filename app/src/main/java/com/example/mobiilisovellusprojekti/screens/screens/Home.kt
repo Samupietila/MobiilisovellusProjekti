@@ -20,9 +20,7 @@ import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 import androidx.compose.foundation.isSystemInDarkTheme
 
 @Composable
-fun Home(navController: NavController, modifier: Modifier = Modifier) {
-
-    val isDarkTheme = isSystemInDarkTheme()
+fun Home(navController: NavController, modifier: Modifier = Modifier, isDarkTheme: Boolean) {
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
         val colors = MaterialTheme.colorScheme
@@ -77,9 +75,3 @@ fun Home(navController: NavController, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val navController = rememberNavController()
-    Home(navController = navController)
-}

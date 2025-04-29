@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 
 @Composable
-fun Test(navController: NavController, modifier: Modifier) {
+fun Test(navController: NavController, modifier: Modifier, isDarkTheme: Boolean) {
 
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 

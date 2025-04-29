@@ -6,6 +6,6 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun GameStatistics(navController: NavController, modifier: Modifier) {
+fun GameStatistics(navController: NavController, modifier: Modifier, isDarkTheme: Boolean) {
 
 }

@@ -23,6 +23,7 @@ import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 fun WordScreen(
     navController: NavController,
     modifier: Modifier,
+    isDarkTheme: Boolean,
     viewModel: WordViewModel = viewModel()
 ) {
     var isDarkTheme by remember { mutableStateOf(false) }

@@ -1,6 +1,7 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
@@ -34,7 +35,13 @@ import kotlin.text.compareTo
 import kotlin.toString
 
 @Composable
-fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
+fun BTConnect(navController: NavController,
+              modifier: Modifier,
+              bleViewModel: BleViewModel,
+              chatViewModel: ChatViewModel,
+              drawingViewModel: DrawingViewModel,
+              isDarkTheme: Boolean
+) {
 
     val context = LocalContext.current
 
@@ -54,7 +61,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
     val advertisingState by bleViewModel.advertisingState.collectAsState(AdvertisingState(isAdvertising = false))
 
 
-    val isDarkTheme = isSystemInDarkTheme()
+
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
 
@@ -83,8 +90,8 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
             // Host Button
             Button(
                 onClick = {
-                    bleViewModel.startAdvertising(context, chatViewModel) {
-                        navController.navigate(NavigationScreens.GAMESCREEN.title)
+                    bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel) {
+                        navController.navigate(NavigationScreens.GUESSSCREEN.title)
                     }
                 },
                 enabled = !isScanning,
@@ -176,4 +183,3 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
             }
         }
     }
-}

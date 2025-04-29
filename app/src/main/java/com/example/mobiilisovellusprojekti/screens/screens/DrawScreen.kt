@@ -81,7 +81,7 @@ fun deserializePathDataBinary(bytes: ByteArray): PathData {
 
 
 @Composable
-fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
+fun DrawScreen(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel, isDarkTheme: Boolean) {
 
 
     LaunchedEffect(key1 = bleViewModel) {

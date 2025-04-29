@@ -5,6 +5,6 @@ import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 
 @Composable
-fun History(navController: NavController, modifier: Modifier) {
+fun History(navController: NavController, modifier: Modifier, isDarkTheme: Boolean) {
 
 }

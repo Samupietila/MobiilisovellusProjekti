@@ -5,6 +5,6 @@ import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Contacts(navController: NavController, modifier: Modifier) {
+fun Contacts(navController: NavController, modifier: Modifier, isDarkTheme: Boolean) {
 
 }

@@ -1,5 +1,6 @@
 package com.example.mobiilisovellusprojekti.screens.navigation
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,50 +44,55 @@ enum class NavigationScreens(val title: String) {
 @Composable
 fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
     val navController = rememberNavController()
+    val isDarkTheme = isSystemInDarkTheme()
 
     NavHost(
         navController = navController,
         startDestination = NavigationScreens.TEST.title
     ) {
 
-        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
-        composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
-        composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
+        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier, isDarkTheme) }
+        composable(NavigationScreens.HOME.title) {Home(navController, modifier, isDarkTheme)}
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel, isDarkTheme) }
+        composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier, isDarkTheme) }
         composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(
             navController, modifier, bleViewModel, chatViewModel, drawingViewModel,
-            gameViewModel = gameViewModel
+            gameViewModel = gameViewModel, isDarkTheme
         ) }
         composable(NavigationScreens.GAMESCREEN.title) { GameScreen(
             navController, modifier, bleViewModel, chatViewModel,
             gameViewModel = gameViewModel,
-            drawingViewModel = drawingViewModel
+            drawingViewModel = drawingViewModel, isDarkTheme
         ) }
-        composable(NavigationScreens.HISTORY.title) { History(navController, modifier) }
-        composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier) }
-        composable(NavigationScreens.PLAYER.title) { Player(navController, modifier) }
-        composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier) }
-        composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
-        composable(NavigationScreens.GUESSSCREEN.title) { GuessScreen(modifier, drawingViewModel, navController, bleViewModel,chatViewModel) }
+        composable(NavigationScreens.HISTORY.title) { History(navController, modifier, isDarkTheme) }
+        composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier, isDarkTheme) }
+        composable(NavigationScreens.PLAYER.title) { Player(navController, modifier, isDarkTheme) }
+        composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier, isDarkTheme) }
+        composable(NavigationScreens.TEST.title) { Test(navController, modifier, isDarkTheme) }
 
         // Handle both Back to Home and Play Again button navigation
-        composable(NavigationScreens.GUESS.title) {
+        composable(NavigationScreens.GUESSSCREEN.title) {
             GuessScreen(
                 modifier = modifier,
                 onBackToHome = {
                     // Navigate back to Home when "Back to Home" is pressed
                     navController.navigate(NavigationScreens.HOME.title) {
                         // Pop the back stack to avoid going back to the Guess screen
-                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                        popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                     }
                 },
                 onPlayAgain = {
                     // Navigate to BTConnect when "Play Again" is pressed
                     navController.navigate(NavigationScreens.BTCONNECT.title) {
                         // Pop the back stack to avoid going back to the Guess screen
-                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                        popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                     }
-                }
+                },
+                drawingViewModel = drawingViewModel,
+                navController = navController,
+                bleViewModel = bleViewModel,
+                chatViewModel = chatViewModel, isDarkTheme,
+                gameViewModel
             )
         }
     }

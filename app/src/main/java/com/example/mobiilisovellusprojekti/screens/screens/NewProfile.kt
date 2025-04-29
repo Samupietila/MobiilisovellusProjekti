@@ -5,6 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun NewProfile(navController: NavController, modifier: Modifier) {
+fun NewProfile(navController: NavController, modifier: Modifier, isDarkTheme: Boolean) {
 
 }

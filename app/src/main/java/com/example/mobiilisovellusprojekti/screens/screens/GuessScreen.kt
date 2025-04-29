@@ -31,21 +31,25 @@ import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.R
+import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
 
 @Composable
 fun GuessScreen(
     modifier: Modifier = Modifier,
     onBackToHome: () -> Unit,
-    onPlayAgain: () -> Unit
+    onPlayAgain: () -> Unit,
     drawingViewModel: DrawingViewModel,
     navController: NavController,
     bleViewModel: BleViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
+    isDarkTheme: Boolean,
+    gameViewModel: GameViewModel
 ) {
     val state by drawingViewModel.state.collectAsStateWithLifecycle()
+
+    val gameOver = gameViewModel.gameOver.collectAsState()
     var message by remember { mutableStateOf("") }
     var guesses by remember { mutableStateOf(listOf<String>()) }
-    var gameOver by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
 
@@ -54,8 +58,6 @@ fun GuessScreen(
     }
 
     MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
-        val colors = MaterialTheme.colorScheme
-        val typography = MaterialTheme.typography
 
     val colors = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
@@ -114,8 +116,8 @@ fun GuessScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if (gameOver) {
-            Dialog(onDismissRequest = { gameOver = false }) {
+        if (gameOver.value) {
+            Dialog(onDismissRequest = { gameViewModel.setGameOver(false) }) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -214,9 +216,6 @@ fun GuessScreen(
                         onDone = {
                             if (message.isNotBlank()) {
                                 guesses = guesses + message
-                                if (message.lowercase() == correctWord.lowercase()) {
-                                    gameOver = true
-                                }
                                 message = ""
                                 focusManager.clearFocus()
                             }
@@ -228,9 +227,6 @@ fun GuessScreen(
                     onClick = {
                         if (message.isNotBlank()) {
                             guesses = guesses + message
-                            if (message.lowercase() == correctWord.lowercase()) {
-                                gameOver = true
-                            }
                             println("Submitted guess: $message")
                             bleViewModel.sendMessage(message, chatViewModel)
                             message = ""
@@ -253,4 +249,4 @@ fun GuessScreen(
             listState.animateScrollToItem(guesses.size - 1)
         }
     }
-}
+}}

@@ -36,7 +36,8 @@ fun GameScreen(
     bleViewModel: BleViewModel,
     chatViewModel: ChatViewModel,
     gameViewModel: GameViewModel,
-    drawingViewModel: DrawingViewModel
+    drawingViewModel: DrawingViewModel,
+    isDarkTheme: Boolean
 ) {
     var textInput by remember { mutableStateOf("") }
     val chatMessages by chatViewModel.chatMessages.collectAsState()

@@ -1,8 +1,10 @@
 package com.example.mobiilisovellusprojekti.ViewModels
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class GameViewModel: ViewModel() {
@@ -12,11 +14,20 @@ class GameViewModel: ViewModel() {
         _currentWord.value = word
     }
 
+    private val _gameOver = MutableStateFlow(false)
+    val gameOver: StateFlow<Boolean> get() = _gameOver
+
+    fun setGameOver(value: Boolean) {
+        _gameOver.value = value
+    }
+
     fun onNewMessage(message: String) {
         if (message.trim().equals(_currentWord.value.trim(), ignoreCase = true)) {
             Log.d("onNewMessage", "CORRECT ANSWER $message")
+            setGameOver(true)
         } else {
             Log.d("onNewMessage", "NOT CORRECT ANSWER ${_currentWord.value} ≠ $message")
+            setGameOver(false)
         }
     }
 }
