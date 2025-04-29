@@ -75,43 +75,44 @@ fun ColumnScope.CanvasControls(
         modifier = Modifier
             .padding(11.dp)
             .navigationBarsPadding(),
-        colors = secondaryButtonColors()
+        colors = secondaryButtonColors(),
+        shape = MaterialTheme.shapes.medium
     ) {
         Text("Clear Canvas")
     }
 }
 
-    @Composable
-    fun DrawingColorItem(
-        drawingColor: DrawingColor,
-        isSelected: Boolean
-    ) {
-        val isDarkTheme = isSystemInDarkTheme()
+@Composable
+fun DrawingColorItem(
+    drawingColor: DrawingColor,
+    isSelected: Boolean
+) {
+    val isDarkTheme = isSystemInDarkTheme()
 
-        val borderColor = if (isSelected) {
-            if (isDarkTheme) Color.White else Color.Black
-        } else {
-            Color.Transparent
+
+    val borderColor = when {
+        isSelected -> {
+            if (isDarkTheme) Color.Black else Color.Transparent
         }
-
-        val backgroundColor = if (drawingColor.isEraser) {
-            MaterialTheme.colorScheme.background
-        } else {
-            drawingColor.color
-        }
-
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(backgroundColor)
-                .border(
-                    width = 1.dp,
-                    color = borderColor,
-                    shape = CircleShape
-                )
-                .size(40.dp)
-        )
+        isDarkTheme -> Color.White
+        else -> Color.Black
     }
 
+    val backgroundColor = if (drawingColor.isEraser) {
+        Color.White
+    } else {
+        drawingColor.color
+    }
 
-
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .border(
+                width = 2.dp,
+                color = borderColor,
+                shape = CircleShape
+            )
+            .size(40.dp)
+    )
+}

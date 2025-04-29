@@ -49,7 +49,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         startDestination = NavigationScreens.TEST.title
     ) {
 
-       composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
+        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier) }
         composable(NavigationScreens.HOME.title) {Home(navController, modifier)}
         composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel) }
         composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier) }
@@ -69,5 +69,25 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
         composable(NavigationScreens.TEST.title) { Test(navController, modifier) }
         composable(NavigationScreens.GUESSSCREEN.title) { GuessScreen(modifier, drawingViewModel, navController, bleViewModel,chatViewModel) }
 
+        // Handle both Back to Home and Play Again button navigation
+        composable(NavigationScreens.GUESS.title) {
+            GuessScreen(
+                modifier = modifier,
+                onBackToHome = {
+                    // Navigate back to Home when "Back to Home" is pressed
+                    navController.navigate(NavigationScreens.HOME.title) {
+                        // Pop the back stack to avoid going back to the Guess screen
+                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                    }
+                },
+                onPlayAgain = {
+                    // Navigate to BTConnect when "Play Again" is pressed
+                    navController.navigate(NavigationScreens.BTCONNECT.title) {
+                        // Pop the back stack to avoid going back to the Guess screen
+                        popUpTo(NavigationScreens.GUESS.title) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }
