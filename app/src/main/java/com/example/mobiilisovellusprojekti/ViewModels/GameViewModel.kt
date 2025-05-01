@@ -18,7 +18,9 @@ class GameViewModel: ViewModel() {
     val gameOver: StateFlow<Boolean> get() = _gameOver
 
     fun setGameOver(value: Boolean) {
-        _gameOver.value = value
+        if (_gameOver.value != value) {
+            _gameOver.value = value
+        }
     }
 
     fun onNewMessage(message: String) {
@@ -29,5 +31,10 @@ class GameViewModel: ViewModel() {
             Log.d("onNewMessage", "NOT CORRECT ANSWER ${_currentWord.value} ≠ $message")
             setGameOver(false)
         }
+    }
+
+    fun resetGameState() {
+        _currentWord.value = ""
+        _gameOver.value = false
     }
 }

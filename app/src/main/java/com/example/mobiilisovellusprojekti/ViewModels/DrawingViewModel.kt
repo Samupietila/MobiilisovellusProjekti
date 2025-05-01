@@ -162,4 +162,9 @@ class DrawingViewModel : ViewModel(){
         }
         return PathData(id, color, path)
     }
+
+    fun resetDrawingState() {
+        _state.value = DrawingState()
+    }
+
 }

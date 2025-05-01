@@ -46,29 +46,105 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
     val navController = rememberNavController()
     val isDarkTheme = isSystemInDarkTheme()
 
+    fun resetAll() {
+        // Reset all ViewModels to their initial state
+        bleViewModel.resetBleViewModel()
+        chatViewModel.resetChatState()
+        drawingViewModel.resetDrawingState()
+        gameViewModel.resetGameState()
+    }
+
     NavHost(
         navController = navController,
         startDestination = NavigationScreens.TEST.title
     ) {
 
-        composable(NavigationScreens.WORD.title) {WordScreen(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.HOME.title) {Home(navController, modifier, isDarkTheme)}
-        composable(NavigationScreens.BTCONNECT.title) { BTConnect(navController, modifier, bleViewModel, chatViewModel, drawingViewModel, gameViewModel,isDarkTheme) }
-        composable(NavigationScreens.CONTACTS.title) { Contacts(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(
-            navController, modifier, bleViewModel, chatViewModel, drawingViewModel,
-            gameViewModel = gameViewModel, isDarkTheme
-        ) }
+        composable(NavigationScreens.WORD.title) {WordScreen(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+        composable(NavigationScreens.HOME.title) {Home(
+            navController,
+            modifier,
+            isDarkTheme)}
+
+        composable(NavigationScreens.BTCONNECT.title) { BTConnect(
+            navController,
+            modifier,
+            bleViewModel,
+            chatViewModel,
+            drawingViewModel,
+            gameViewModel,
+            isDarkTheme) }
+
+        composable(NavigationScreens.CONTACTS.title) { Contacts(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+
+
         composable(NavigationScreens.GAMESCREEN.title) { GameScreen(
             navController, modifier, bleViewModel, chatViewModel,
-            gameViewModel = gameViewModel,
-            drawingViewModel = drawingViewModel, isDarkTheme
+            gameViewModel,
+            drawingViewModel,
+            isDarkTheme
         ) }
-        composable(NavigationScreens.HISTORY.title) { History(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.NEWPROFILE.title) { NewProfile(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.PLAYER.title) { Player(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.STATISTICS.title) { GameStatistics(navController, modifier, isDarkTheme) }
-        composable(NavigationScreens.TEST.title) { Test(navController, modifier, isDarkTheme) }
+
+        composable(NavigationScreens.HISTORY.title) { History(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+        composable(NavigationScreens.NEWPROFILE.title) { NewProfile(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+        composable(NavigationScreens.PLAYER.title) { Player(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+        composable(NavigationScreens.STATISTICS.title) { GameStatistics(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+        composable(NavigationScreens.TEST.title) { Test(
+            navController,
+            modifier,
+            isDarkTheme) }
+
+
+        composable(NavigationScreens.DRAWSCREEN.title) { DrawScreen(
+            navController,
+            modifier,
+            onBackToHome = {
+                // Navigate back to Home when "Back to Home" is pressed
+                navController.navigate(NavigationScreens.HOME.title) {
+                    resetAll()
+                    // Pop the back stack to avoid going back to the Guess screen
+                    popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
+                }
+            },
+            onPlayAgain = {
+                // Navigate to BTConnect when "Play Again" is pressed
+                navController.navigate(NavigationScreens.BTCONNECT.title) {
+                    resetAll()
+                    // Pop the back stack to avoid going back to the Guess screen
+                    popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
+                }
+            },
+
+            bleViewModel,
+            chatViewModel,
+            drawingViewModel,
+            gameViewModel,
+            isDarkTheme
+        ) }
+
 
         // Handle both Back to Home and Play Again button navigation
         composable(NavigationScreens.GUESSSCREEN.title) {
@@ -77,21 +153,24 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
                 onBackToHome = {
                     // Navigate back to Home when "Back to Home" is pressed
                     navController.navigate(NavigationScreens.HOME.title) {
+                        resetAll()
                         // Pop the back stack to avoid going back to the Guess screen
                         popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                     }
                 },
                 onPlayAgain = {
                     // Navigate to BTConnect when "Play Again" is pressed
+                    resetAll()
                     navController.navigate(NavigationScreens.BTCONNECT.title) {
                         // Pop the back stack to avoid going back to the Guess screen
                         popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                     }
                 },
-                drawingViewModel = drawingViewModel,
-                navController = navController,
-                bleViewModel = bleViewModel,
-                chatViewModel = chatViewModel, isDarkTheme,
+                drawingViewModel,
+                navController,
+                bleViewModel,
+                chatViewModel,
+                isDarkTheme,
                 gameViewModel
             )
         }

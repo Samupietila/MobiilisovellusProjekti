@@ -72,7 +72,7 @@ class ChatBleServer(
     private val _state = MutableStateFlow(AdvertisingState(isAdvertising = false))
     val state: StateFlow<AdvertisingState> = _state
 
-    private val advertiser = BleAdvertiser.create(context)
+    private var advertiser = BleAdvertiser.create(context)
     val advertiserConfig = BleAdvertisingConfig(
         settings = BleAdvertisingSettings(
             deviceName = "Doodle",
@@ -136,15 +136,16 @@ class ChatBleServer(
 
             if (message == "CLEAR_CANVAS") {
                 drawingViewModel.onClearCanvas()
+            } else if (message == "GAME_OVER") {
+                if (!gameViewModel.gameOver.value) {
+                    gameViewModel.setGameOver(true)
+                }
+            } else {
+                gameViewModel.onNewMessage(message)
+                chatViewModel.addMessage(message, isSentByUser = false)
+
             }
-
-            gameViewModel.onNewMessage(message)
-
             Log.d("ChatBleServer", "Received message: $message")
-            chatViewModel.addMessage(message, isSentByUser = false)
-
-            // Add the function to check if the guess was correct
-
         }?.launchIn(viewModelScope)
 
         // Search for Charasteristic
@@ -227,7 +228,7 @@ class ChatBleServer(
             startAdvertisingProcess()
         }
 
-        }
+    }
 
     private fun startAdvertisingProcess(){
         try {
@@ -354,6 +355,12 @@ class ChatBleServer(
         }
     }
 
+    fun stopServer() {
+        advertiser = BleAdvertiser.create(context)
+        _connectedDevices.clear()
+        _state.value = AdvertisingState(isAdvertising = false)
+    }
+
 }
 
 
@@ -464,10 +471,10 @@ class BleViewModel : ViewModel() {
                 .onEach {
                     scanResults.value = it
                     isScanning.value = false
-                            it.forEach { device ->
-                                //val services = device.services.map { it.uuid.toString() }
-                                //Log.d("DBG", "Found device: ${device.name}, services: ${device.bondState}")
-                        }
+                    it.forEach { device ->
+                        //val services = device.services.map { it.uuid.toString() }
+                        //Log.d("DBG", "Found device: ${device.name}, services: ${device.bondState}")
+                    }
 
                 }
                 .launchIn(viewModelScope)
@@ -531,10 +538,15 @@ class BleViewModel : ViewModel() {
                             // Handle the received message here
                             if (message == "CLEAR_CANVAS") {
                                 drawViewModel.onClearCanvas()
+                            } else if (message == "GAME_OVER") {
+                                if (!gameViewModel.gameOver.value) {
+                                    gameViewModel.setGameOver(true)
+                                }
+                            } else {
+                                chatViewModel.addMessage(message, isSentByUser = false)
+                                gameViewModel.onNewMessage(message)
                             }
 
-                            chatViewModel.addMessage(message, isSentByUser = false)
-                            gameViewModel.onNewMessage(message)
 
                         }
                         .launchIn(this)
@@ -642,30 +654,30 @@ class BleViewModel : ViewModel() {
                     try {
                         val coordinate = drawingState.paths.last()
                         Log.d("Cord", coordinate.toString())
-                            // serialisoidaan, en oo tehny mitää vastaanottamiseen
-                            val byteData = drawingViewModel.serializePathDataBinary(coordinate)
+                        // serialisoidaan, en oo tehny mitää vastaanottamiseen
+                        val byteData = drawingViewModel.serializePathDataBinary(coordinate)
 
-                            // Chunking data
-                            val totalChunks = (byteData.size + 500 - 1) / 500
-                            for (i in 0 until totalChunks) {
-                                val start = i * 500
-                                val end = minOf(start + 500, byteData.size)
-                                val chunk = byteData.copyOfRange(start, end)
+                        // Chunking data
+                        val totalChunks = (byteData.size + 500 - 1) / 500
+                        for (i in 0 until totalChunks) {
+                            val start = i * 500
+                            val end = minOf(start + 500, byteData.size)
+                            val chunk = byteData.copyOfRange(start, end)
 
-                                // Add a flag to indicate if this is the last chunk
-                                val isLastChunk = (i == totalChunks - 1)
-                                val chunkWithFlag = ByteArray(chunk.size + 1).apply {
-                                    this[0] = if (isLastChunk) 1 else 0 // 1 for last chunk, 0 otherwise
-                                    System.arraycopy(chunk, 0, this, 1, chunk.size)
-                                }
-
-                                characteristic.write(DataByteArray(chunkWithFlag))
+                            // Add a flag to indicate if this is the last chunk
+                            val isLastChunk = (i == totalChunks - 1)
+                            val chunkWithFlag = ByteArray(chunk.size + 1).apply {
+                                this[0] = if (isLastChunk) 1 else 0 // 1 for last chunk, 0 otherwise
+                                System.arraycopy(chunk, 0, this, 1, chunk.size)
                             }
 
-                            Log.d(
-                                "sendCoordinatesToServer",
-                                "Coordinate ${coordinate.id} sent to server"
-                            )
+                            characteristic.write(DataByteArray(chunkWithFlag))
+                        }
+
+                        Log.d(
+                            "sendCoordinatesToServer",
+                            "Coordinate ${coordinate.id} sent to server"
+                        )
 
                     } catch (e: Exception) {
                         Log.e("sendCoordinatesToServer", "Failed to send coordinates to server")
@@ -684,6 +696,20 @@ class BleViewModel : ViewModel() {
         }
     }
 
+    fun resetBleViewModel() {
+        if (::chatBleServer.isInitialized) {
+            chatBleServer.stopServer()
+        }
+        _connection = null
+        _characteristic = null
+        _coordCharasteristic = null
+        isHost.value = false
+        connectionState.postValue("")
+        scanResults.postValue(emptyList())
+        isScanning.postValue(false)
+        isAdvertising.postValue(false)
+        scanResults.postValue(emptyList())
+    }
 
 
 

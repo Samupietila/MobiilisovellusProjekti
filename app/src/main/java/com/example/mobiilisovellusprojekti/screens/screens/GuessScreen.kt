@@ -55,6 +55,13 @@ fun GuessScreen(
 
     LaunchedEffect(key1 = bleViewModel) {
         bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
+        bleViewModel.observeChatNotifications(
+            navController.context,
+            chatViewModel,
+            gameViewModel,
+            drawingViewModel
+        )
+        Log.d("LE - ble",gameOver.value.toString())
     }
 
     LaunchedEffect(gameOver.value) {
@@ -121,6 +128,7 @@ fun GuessScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         if (gameOver.value) {
+            bleViewModel.sendMessage("GAME_OVER",chatViewModel)
             Dialog(onDismissRequest = { gameViewModel.setGameOver(false) }) {
                 Box(
                     modifier = Modifier

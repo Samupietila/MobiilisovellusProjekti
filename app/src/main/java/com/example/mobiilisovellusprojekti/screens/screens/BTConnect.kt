@@ -94,7 +94,7 @@ fun BTConnect(navController: NavController,
                 onClick = {
                     bleViewModel.startAdvertising(context, chatViewModel, drawingViewModel, gameViewModel) {
                         bleViewModel.isHost.value = true
-                        navController.navigate(NavigationScreens.GUESSSCREEN.title)
+                        navController.navigate(NavigationScreens.DRAWSCREEN.title)
                     }
                 },
                 enabled = !isScanning,
@@ -141,7 +141,7 @@ fun BTConnect(navController: NavController,
                                     try {
                                         val isConnected = bleViewModel.connectToDevice(context, result)
                                         if (isConnected) {
-                                            navController.navigate(NavigationScreens.DRAWSCREEN.title)
+                                            navController.navigate(NavigationScreens.GUESSSCREEN.title)
                                         } else {
                                             Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
                                         }

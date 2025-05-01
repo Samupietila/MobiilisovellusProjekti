@@ -17,4 +17,8 @@ class ChatViewModel : ViewModel() {
     fun addMessage(message: String, isSentByUser: Boolean) {
         _chatMessages.value = _chatMessages.value + ChatMessage(message, isSentByUser)
     }
+
+    fun resetChatState() {
+        _chatMessages.value = emptyList()
+    }
 }
