@@ -54,7 +54,10 @@ fun BTConnect(navController: NavController,
                 requestPermissions(activity)
             }
         }
-        bleViewModel.initializeChatBleServer(context, chatViewModel)
+
+        if (!bleViewModel.isServerInitialized()) {
+            bleViewModel.initializeChatBleServer(context)
+        }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -112,7 +115,10 @@ fun BTConnect(navController: NavController,
 
             // Join Button
             Button(
-                onClick = { bleViewModel.scanDevices(context) },
+                onClick = {
+                    bleViewModel.clearScanResults()
+                    bleViewModel.scanDevices(context)
+                          },
                 enabled = !isScanning,
                 colors = primaryButtonColors(),
                 modifier = Modifier.fillMaxWidth(),

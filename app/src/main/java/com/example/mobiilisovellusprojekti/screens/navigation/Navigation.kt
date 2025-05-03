@@ -42,13 +42,18 @@ enum class NavigationScreens(val title: String) {
 
 // IMPLEMENTOI BACKSTACK JA SEN KÄYTTÖLIITTYMÄ???
 @Composable
-fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
+fun Navigation(modifier: Modifier,
+               bleViewModel: BleViewModel,
+               chatViewModel: ChatViewModel,
+               drawingViewModel: DrawingViewModel,
+               gameViewModel: GameViewModel
+            ) {
     val navController = rememberNavController()
     val isDarkTheme = isSystemInDarkTheme()
 
     fun resetAll() {
         // Reset all ViewModels to their initial state
-        bleViewModel.resetBleViewModel()
+        bleViewModel.resetBleViewModel(navController.context)
         chatViewModel.resetChatState()
         drawingViewModel.resetDrawingState()
         gameViewModel.resetGameState()
@@ -137,7 +142,6 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
                     popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                 }
             },
-
             bleViewModel,
             chatViewModel,
             drawingViewModel,
@@ -160,8 +164,8 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
                 },
                 onPlayAgain = {
                     // Navigate to BTConnect when "Play Again" is pressed
-                    resetAll()
                     navController.navigate(NavigationScreens.BTCONNECT.title) {
+                    resetAll()
                         // Pop the back stack to avoid going back to the Guess screen
                         popUpTo(NavigationScreens.GUESSSCREEN.title) { inclusive = true }
                     }

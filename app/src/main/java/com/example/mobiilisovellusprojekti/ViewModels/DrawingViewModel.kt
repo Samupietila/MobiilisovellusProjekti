@@ -106,6 +106,9 @@ class DrawingViewModel : ViewModel(){
                 paths = it.paths + currentPathData
             )
         }
+
+        Log.d("Sending", "Sending coordinates to server")
+
         //tähän send to server?
         bleViewModel.sendCoordinatesToServer(
             _state.value,

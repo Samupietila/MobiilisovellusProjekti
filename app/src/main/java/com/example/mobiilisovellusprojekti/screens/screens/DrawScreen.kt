@@ -106,11 +106,18 @@ fun DrawScreen(navController: NavController,
 
 
     LaunchedEffect(key1 = bleViewModel) {
+
+        Log.d("LaunchedEffect","Initializing all of the observsations")
+
         bleViewModel.observeChatNotifications(
-            navController.context, chatViewModel, gameViewModel,
-            drawViewModel = drawingViewModel
+            navController.context,
+            chatViewModel,
+            gameViewModel,
+            drawingViewModel
         )
-        bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
+        bleViewModel.observeCordinateNotifications(
+            navController.context,
+            drawingViewModel)
     }
 
     val drawingState by drawingViewModel.state.collectAsStateWithLifecycle()

@@ -54,6 +54,7 @@ fun GuessScreen(
     val listState = rememberLazyListState()
 
     LaunchedEffect(key1 = bleViewModel) {
+        Log.d("key1 - ble", "LE launched")
         bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
         bleViewModel.observeChatNotifications(
             navController.context,
@@ -61,7 +62,6 @@ fun GuessScreen(
             gameViewModel,
             drawingViewModel
         )
-        Log.d("LE - ble",gameOver.value.toString())
     }
 
     LaunchedEffect(gameOver.value) {
