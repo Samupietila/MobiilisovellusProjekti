@@ -108,10 +108,6 @@ class ChatBleServer(
         }
     }
 
-
-    private var messageJob: Job? = null
-    private var coordinatesJob: Job? = null
-
     // SET UP THE DATA HERE
     fun setUpServices(services: ServerBleGattService, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel) {
 
@@ -119,10 +115,9 @@ class ChatBleServer(
         val messageCharacteristic = services.findCharacteristic(BleViewModel.CHARACTERISTIC_UUID)
 
         // Handle Messages here and what happens next
-        messageJob = messageCharacteristic?.value?.onEach { data ->
+        messageCharacteristic?.value?.onEach { data ->
             val message = String(data.value, Charsets.UTF_8)
 
-            Log.d("Message char",messageJob.toString())
 
 
             if (message == "CLEAR_CANVAS") {
@@ -146,11 +141,10 @@ class ChatBleServer(
 
 
         // Handle Coordinate and what happens here
-        coordinatesJob = coordinatesCharasteristics?.value?.onEach { data ->
+        coordinatesCharasteristics?.value?.onEach { data ->
             try {
                 Log.d("ChatBleServer", "Received coordinates characteristic: ${data}")
                 Log.d("ChatBleServer", "Received coordinates data: ${data.value}")
-                Log.d("Coord Char",coordinatesJob.toString())
 
                 // Extract the flag and the actual chunk
                 val isLastChunk = data.value[0] == 1.toByte()
@@ -178,16 +172,6 @@ class ChatBleServer(
 
     }
 
-    fun stopServices() {
-        coordinatesJob?.cancel()
-        messageJob?.cancel()
-        coordinatesJob = null
-        messageJob = null
-    }
-
-
-    private var observeConnectionsJob: Job? = null
-
     fun observeConnections(server: ServerBleGatt,
                            viewModelScope: CoroutineScope,
                            chatViewModel: ChatViewModel,
@@ -196,7 +180,7 @@ class ChatBleServer(
                            onDeviceConnected: () -> Unit
     )
     {
-        observeConnectionsJob = server.connectionEvents
+        server.connectionEvents
             .mapNotNull { it as? ServerConnectionEvent.DeviceConnected }
             .map { it.connection }
             .onEach { connection ->
@@ -205,16 +189,11 @@ class ChatBleServer(
                     setUpServices(service, viewModelScope, chatViewModel, drawingViewModel, gameViewModel)
 
                     Log.d("New Connection","${connection.device.name} connected: ${connection.device.address}")
-                    Log.d("New Connection",_connectedDevices.toString())
+
                     // Notify the devices that connection has been established
                     onDeviceConnected()
                 }
             }.launchIn(viewModelScope)
-    }
-
-    fun cancelObserveConnections() {
-        observeConnectionsJob?.cancel()
-        observeConnectionsJob = null
     }
 
     fun startAdvertising() {
@@ -247,12 +226,10 @@ class ChatBleServer(
 
     }
 
-    private var advertisingJob: Job? = null
-
     private fun startAdvertisingProcess(){
         try {
             Log.d("ChatBleServer", "Starting Advertiser")
-            advertisingJob = coroutineScope.launch {
+            coroutineScope.launch {
                 advertiser.advertise(advertiserConfig)
                     .cancellable()
                     .catch { it.printStackTrace() }
@@ -283,13 +260,6 @@ class ChatBleServer(
         } catch (e: SecurityException) {
             Log.e("ChatBleServer", "SecurityException: ${e.message}")
         }
-    }
-
-    fun stopAdvertisingProcess() {
-        advertisingJob?.cancel()
-        advertisingJob = null
-        _state.value = _state.value.copy(isAdvertising = false)
-        Log.d("ChatBleServer", "Advertising process cancelled")
     }
 
     fun startServer(context: Context, viewModelScope: CoroutineScope, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel, onDeviceConnected: () -> Unit) {

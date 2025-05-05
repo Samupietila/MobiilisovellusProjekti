@@ -29,12 +29,6 @@ import no.nordicsemi.android.kotlin.ble.scanner.BleScanner
 import no.nordicsemi.android.kotlin.ble.scanner.aggregator.BleScanResultAggregator
 import java.util.UUID
 
-
-
-
-
-
-
 @SuppressLint("MissingPermission")
 class BleViewModel : ViewModel() {
 
@@ -300,23 +294,6 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    fun stopNotifications() {
-        val characteristic = coordinateCharasteristic
-        if (characteristic != null) {
-            viewModelScope.launch {
-                try {
-                    Log.d("BleViewModel", "Notifications stopped for characteristic: $characteristic")
-                } catch (e: Exception) {
-                    Log.e("BleViewModel", "Failed to stop notifications: ${e.message}")
-                }
-            }
-        } else {
-            Log.e("BleViewModel", "Characteristic not found to stop notifications")
-        }
-    }
-
-
-
     fun sendCoordinatesToServer( drawingState: DrawingState, drawingViewModel: DrawingViewModel) {
 
         if (isHost.value == true) {
@@ -373,13 +350,6 @@ class BleViewModel : ViewModel() {
         scanResults.value = emptyList()
     }
 
-    fun stopAdvertisingProcess() {
-        if (::chatBleServer.isInitialized) {
-            chatBleServer.stopAdvertisingProcess()
-            isAdvertising.value = false
-        }
-    }
-
     fun clearCanvas() {
         if (isHost.value) {
             chatBleServer.sendData("CLEAR_CANVAS", viewModelScope)
@@ -392,14 +362,7 @@ class BleViewModel : ViewModel() {
         return ::chatBleServer.isInitialized
     }
 
-    fun resetBleViewModel(context: Context) {
-        if (::chatBleServer.isInitialized) {
-            Log.d("reset","Reset triggered")
-            chatBleServer.stopServices()
-            chatBleServer.cancelObserveConnections()
-            chatBleServer.stopAdvertisingProcess() // Stop advertising¨
-            chatBleServer.clearConnectedDevices()
-        }
+    fun resetBleViewModel() {
         _connection?.close()
         _connection?.disconnect()
         _connection = null

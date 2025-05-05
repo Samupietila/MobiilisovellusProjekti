@@ -53,7 +53,7 @@ fun Navigation(modifier: Modifier,
 
     fun resetAll() {
         // Reset all ViewModels to their initial state
-        bleViewModel.resetBleViewModel(navController.context)
+        bleViewModel.resetBleViewModel()
         chatViewModel.resetChatState()
         drawingViewModel.resetDrawingState()
         gameViewModel.resetGameState()
