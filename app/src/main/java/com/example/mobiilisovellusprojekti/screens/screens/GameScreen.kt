@@ -47,7 +47,7 @@ fun GameScreen(
         bleViewModel.observeChatNotifications(
             navController.context, chatViewModel,
             gameViewModel = gameViewModel,
-            drawViewModel = drawingViewModel
+            drawingViewModel = drawingViewModel
         )
     }
 

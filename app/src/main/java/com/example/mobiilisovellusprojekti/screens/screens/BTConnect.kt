@@ -1,7 +1,6 @@
 package com.example.mobiilisovellusprojekti.screens.screens
 
 import android.app.Activity
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.background
@@ -25,15 +24,9 @@ import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.icons.Icons
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
-import java.util.UUID
-import kotlin.text.compareTo
-import kotlin.toString
+
 
 @Composable
 fun BTConnect(navController: NavController,
@@ -54,7 +47,7 @@ fun BTConnect(navController: NavController,
                 requestPermissions(activity)
             }
         }
-        bleViewModel.initializeChatBleServer(context, chatViewModel)
+        bleViewModel.initializeChatBleServer(context)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -112,7 +105,10 @@ fun BTConnect(navController: NavController,
 
             // Join Button
             Button(
-                onClick = { bleViewModel.scanDevices(context) },
+                onClick = {
+                    bleViewModel.clearScannedDevices()
+                    bleViewModel.scanDevices(context)
+                          },
                 enabled = !isScanning,
                 colors = primaryButtonColors(),
                 modifier = Modifier.fillMaxWidth(),
