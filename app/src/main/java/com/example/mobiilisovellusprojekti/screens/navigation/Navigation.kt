@@ -56,7 +56,7 @@ fun Navigation(modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: Ch
 
     NavHost(
         navController = navController,
-        startDestination = NavigationScreens.TEST.title
+        startDestination = NavigationScreens.HOME.title
     ) {
 
         composable(NavigationScreens.WORD.title) {WordScreen(
