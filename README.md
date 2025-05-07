@@ -63,7 +63,9 @@
 
 ## Screenshots
 
-![Kuvaus](images/home.png)
+<p align="center">
+  <img src="images/home.png" alt="Kuvaus" width="300">
+</p>
 
 
 
