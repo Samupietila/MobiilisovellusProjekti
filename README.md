@@ -18,11 +18,10 @@
 3. [Installation](#installation)
 4. [Screenshots](#screenshots)
 5. [Architecture](#architecture)
-6. [Testing](#testing)
-7. [Project Status](#project-status)
-8. [Roadmap](#roadmap)
-9. [Developers](#developers)
-10. [License](#license)
+6. [Project Status](#project-status)
+7. [Roadmap](#roadmap)
+8. [Developers](#developers)
+9. [License](#license)
 
 </details>
 
@@ -39,7 +38,6 @@
 - 🧩 Word guessing logic
 - ⚡ Real-time interaction
 - 🎨 Clean and responsive UI with Jetpack Compose, utilizing a custom theme
-
 
 
 
@@ -92,10 +90,6 @@
 The app follows the **MVVM (Model-View-ViewModel)** pattern to separate UI and logic.
 It uses **Jetpack Compose** for the UI, **Bluetooth (Kotlin-BLE)** for real-time device-to-device communication, and **ViewModel** for state management.
 Asynchronous operations are handled using **Kotlin Coroutines**, and **Room** is used for local data storage.
-
-## Testing
-
-- Instructions or strategy on how the app is tested (unit tests, UI tests, etc.) coming soon.
 
 
 ## Project Status
