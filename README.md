@@ -62,7 +62,7 @@
    
 
 ## Screenshots
-- screenshots of project in dark theme
+- Screenshots of project in dark theme
 
 <p align="center">
   <img src="images/home.png" alt="Home screen" width="160">
