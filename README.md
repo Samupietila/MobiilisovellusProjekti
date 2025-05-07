@@ -62,7 +62,7 @@
    
 
 ## Screenshots
-The app supports both dark and light themes for an optimal user experience.
+- 🌓 The app supports both dark and light themes for an optimal user experience.
 
 <p align="center">
   <strong>🌙 Dark Theme</strong>
