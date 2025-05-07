@@ -62,11 +62,15 @@
    
 
 ## Screenshots
+- screenshots of project in dark theme
 
 <p align="center">
-  <img src="images/home.png" alt="Kuvaus" width="300">
+  <img src="images/home.png" alt="Home screen" width="200">
+  <img src="images/find1.png" alt="Find screen" width="200">
+  <img src="images/draw.png" alt="Draw screen" width="200">
+  <img src="images/guess.png" alt="Guess screen" width="200">
+  <img src="images/end.png" alt="End screen" width="200">
 </p>
-
 
 
 ## Architecture
