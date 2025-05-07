@@ -52,7 +52,7 @@
 
 ## Installation
 
-Requirements
+**Requirements:**
 - 📱 Two physical Android devices running Android 13 or newer (for Bluetooth testing)
 - 💻 Android Studio Bumblebee or newer installed on your computer
 
