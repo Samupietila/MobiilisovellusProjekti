@@ -65,6 +65,9 @@
 The app supports both dark and light themes for an optimal user experience.
 
 <p align="center">
+  <strong>🌙 Dark Theme</strong>
+</p>
+<p align="center">
   <img src="images/home.png" alt="Home screen" width="160">
   <img src="images/find1.png" alt="Find screen" width="160">
   <img src="images/hat.png" alt="Draw screen" width="160">
@@ -72,6 +75,9 @@ The app supports both dark and light themes for an optimal user experience.
   <img src="images/end.png" alt="End screen" width="160">
 </p>
 
+<p align="center">
+  <strong>☀️ Light Theme</strong>
+</p>
 <p align="center">
   <img src="images/light1.png" alt="Light 1" width="160">
   <img src="images/light2.png" alt="Light 2" width="160">
