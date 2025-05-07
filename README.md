@@ -49,15 +49,19 @@
 - **Kotlin-BLE** – For peer-to-peer communication
 
 
+
 ## Installation
 
-1. Make sure you have Android Studio (Bumblebee or newer) installed.
-2. Clone the project:
+Requirements
+- 📱 Two physical Android devices running Android 13 or newer (for Bluetooth testing)
+- 💻 Android Studio Bumblebee or newer installed on your computer
+
+1. Clone the repository:
    ```bash
    git clone https://github.com/Samupietila/MobiilisovellusProjekti.git
-3. Open the project in Android Studio.
-4. Run the app on two physical Android devices to test Bluetooth features.
-   
+2. Open the project in Android Studio.
+3. Build and run the app on two physical Android devices.
+4. Ensure Bluetooth is enabled on both devices for multiplayer functionality.
 
 ## Screenshots
 - 🌓 The app supports both dark and light themes for an optimal user experience.
