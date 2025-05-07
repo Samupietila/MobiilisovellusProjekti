@@ -63,7 +63,8 @@
 
 ## Screenshots
 
-- Coming soon...
+![Kuvaus](images/home.png)
+
 
 
 ## Architecture
