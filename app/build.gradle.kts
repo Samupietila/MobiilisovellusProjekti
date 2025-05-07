@@ -53,7 +53,7 @@ dependencies {
 
     testImplementation(libs.junit)
     //testImplementation(libs.androidx.core)
-    
+
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
@@ -66,9 +66,6 @@ dependencies {
 
     // Serialization
     //implementation(libs.kotlinx.serialization.json)
-
-
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -90,4 +87,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // BLEViewModelTest dependencies
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation("com.google.truth:truth:1.4.2")
+    testImplementation("androidx.test.ext:junit:1.1.5")
 }
