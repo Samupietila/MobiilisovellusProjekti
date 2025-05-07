@@ -62,7 +62,7 @@
    
 
 ## Screenshots
-- Screenshots of project in dark theme
+The app supports both dark and light themes for an optimal user experience.
 
 <p align="center">
   <img src="images/home.png" alt="Home screen" width="160">
@@ -70,6 +70,14 @@
   <img src="images/hat.png" alt="Draw screen" width="160">
   <img src="images/guess.png" alt="Guess screen" width="160">
   <img src="images/end.png" alt="End screen" width="160">
+</p>
+
+<p align="center">
+  <img src="images/light1.png" alt="Light 1" width="160">
+  <img src="images/light2.png" alt="Light 2" width="160">
+  <img src="images/light3.png" alt="Light 3" width="160">
+  <img src="images/light4.png" alt="Light 4" width="160">
+  <img src="images/light5.png" alt="Light 5" width="160">
 </p>
 
 
