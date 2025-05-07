@@ -112,3 +112,6 @@ Asynchronous operations are handled using **Kotlin Coroutines**, and **Room** is
 
 
 ## License
+
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License.
+You can view the full license here.
