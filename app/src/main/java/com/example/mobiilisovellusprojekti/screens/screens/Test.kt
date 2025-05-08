@@ -12,16 +12,16 @@ import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 
 @Composable
 fun Test(navController: NavController, modifier: Modifier) {
-  
+
     Column(modifier = modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-      
-         Button(onClick = {
+
+        Button(onClick = {
             navController.navigate(NavigationScreens.WORD.title)
         }
-               ) {
+        ) {
             Text("Go to Word Screen")
         }
-      
+
         Button(onClick = {
             navController.navigate(NavigationScreens.HOME.title)
         }, modifier = Modifier) {
@@ -75,11 +75,10 @@ fun Test(navController: NavController, modifier: Modifier) {
         }, modifier = Modifier) {
             Text("Go to Statistics")
         }
-
         Button(onClick = {
-            navController.navigate(NavigationScreens.GUESS.title)
+            //navController.navigate(NavigationScreens.GUESS.title)
         }, modifier = Modifier) {
-            Text("Go to Guess Screen")
+            Text("Go to GUESS")
         }
     }
 }

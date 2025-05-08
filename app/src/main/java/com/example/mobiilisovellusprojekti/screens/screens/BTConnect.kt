@@ -19,6 +19,7 @@ import com.example.mobiilisovellusprojekti.Permissions.*
 import com.example.mobiilisovellusprojekti.ViewModels.AdvertisingState
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
 import com.example.mobiilisovellusprojekti.screens.navigation.NavigationScreens
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
@@ -28,12 +29,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-
-data class BluetoothDevice(val name: String?, val address: String)
-
+import java.util.UUID
+import kotlin.text.compareTo
+import kotlin.toString
 
 @Composable
-fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel) {
+fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: BleViewModel, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel) {
 
     val context = LocalContext.current
 
@@ -130,7 +131,7 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
                                     try {
                                         val isConnected = bleViewModel.connectToDevice(context, result)
                                         if (isConnected) {
-                                            navController.navigate(NavigationScreens.GAMESCREEN.title)
+                                            navController.navigate(NavigationScreens.DRAWSCREEN.title)
                                         } else {
                                             Log.e("BTConnect", "Failed to connect to device: ${result.name ?: "Unknown"}")
                                         }
@@ -175,4 +176,4 @@ fun BTConnect(navController: NavController, modifier: Modifier, bleViewModel: Bl
             }
         }
     }
-
+}

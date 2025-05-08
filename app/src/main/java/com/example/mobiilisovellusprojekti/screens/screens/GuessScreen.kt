@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -22,7 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
 import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.PathData
 import com.example.mobiilisovellusprojekti.ui.theme.MobiilisovellusProjektiTheme
 import com.example.mobiilisovellusprojekti.ui.theme.primaryButtonColors
 import com.example.mobiilisovellusprojekti.R
@@ -30,18 +35,27 @@ import com.example.mobiilisovellusprojekti.R
 @Composable
 fun GuessScreen(
     modifier: Modifier = Modifier,
-    viewModel: DrawingViewModel = viewModel(),
     onBackToHome: () -> Unit,
     onPlayAgain: () -> Unit
+    drawingViewModel: DrawingViewModel,
+    navController: NavController,
+    bleViewModel: BleViewModel,
+    chatViewModel: ChatViewModel
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by drawingViewModel.state.collectAsStateWithLifecycle()
     var message by remember { mutableStateOf("") }
     var guesses by remember { mutableStateOf(listOf<String>()) }
     var gameOver by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
 
-    val correctWord = "apple" // current correct word
+    LaunchedEffect(key1 = bleViewModel) {
+        bleViewModel.observeCordinateNotifications(navController.context, drawingViewModel)
+    }
+
+    MobiilisovellusProjektiTheme(darkTheme = isDarkTheme) {
+        val colors = MaterialTheme.colorScheme
+        val typography = MaterialTheme.typography
 
     val colors = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
@@ -217,6 +231,8 @@ fun GuessScreen(
                             if (message.lowercase() == correctWord.lowercase()) {
                                 gameOver = true
                             }
+                            println("Submitted guess: $message")
+                            bleViewModel.sendMessage(message, chatViewModel)
                             message = ""
                             focusManager.clearFocus()
                         }

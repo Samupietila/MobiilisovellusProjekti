@@ -18,11 +18,17 @@ import com.example.mobiilisovellusprojekti.Permissions.hasBluetoothPermissions
 import com.example.mobiilisovellusprojekti.Permissions.requestPermissions
 import com.example.mobiilisovellusprojekti.Permissions.PERMISSION_REQUEST_CODE
 import com.example.mobiilisovellusprojekti.ViewModels.ChatViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.DrawingViewModel
+import com.example.mobiilisovellusprojekti.ViewModels.GameViewModel
 
 class MainActivity : ComponentActivity() {
 
     private val bleViewModel: BleViewModel by viewModels()
     private val chatViewModel: ChatViewModel by viewModels()
+    private val drawingViewModel: DrawingViewModel by viewModels()
+    private val gameViewModel: GameViewModel by viewModels()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobiilisovellusProjektiTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Navigation(modifier = Modifier.padding(innerPadding), bleViewModel, chatViewModel)
+                    Navigation(modifier = Modifier.padding(innerPadding), bleViewModel, chatViewModel, drawingViewModel, gameViewModel)
                 }
             }
         }
