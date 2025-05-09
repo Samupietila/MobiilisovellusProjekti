@@ -1,67 +1,66 @@
-#### 1. Johdanto
+## 📱 Technical Documentation – *\[App Name]*
 
-* Sovelluksen tarkoitus
-* Kohderyhmä
-* Lyhyt kuvaus päätoiminnoista
+### 1. Introduction
 
-#### 2. Arkkitehtuuri ja rakenne
+* Purpose of the application
+* Target audience
+* Brief description of the main features
 
-* Käytetty arkkitehtuuri (esim. MVVM, MVC)
-* Kuvaus siitä, miten eri osat keskustelevat (esim. ViewModel ⇄ Repository ⇄ Room)
-* Käytetyt kielet ja työkalut (esim. Kotlin, Jetpack Compose, Room)
+### 2. Architecture and Structure
 
-#### 3. Tiedostorakenne
+* Architecture used (e.g., MVVM, MVC)
+* How the components communicate (e.g., ViewModel ⇔ Repository ⇔ Room)
+* Programming languages and tools used (e.g., Kotlin, Jetpack Compose, Room)
 
-* Lyhyt selitys tärkeimmistä hakemistoista ja tiedostoista
+### 3. Project Structure
+
+* Overview of key folders and files
 
   ```
   /data
-    └── entity/Word.kt          // Tietokannan sanaolio
-    └── dao/WordDao.kt          // Rajapinta tietokantakyselyille
+    └── entity/Word.kt          // Database entity for a word
+    └── dao/WordDao.kt          // Interface for database queries
     └── repository/WordRepository.kt
   /ui
-    └── screens/WordScreen.kt   // Näyttää listan sanoista
+    └── screens/WordScreen.kt   // Displays a list of words
   /viewmodels
     └── WordViewModel.kt
   ```
 
-#### 4. Tietokanta
+### 4. Database
 
-* Käytetty tietokantateknologia (esim. Room)
-* Tietokannan rakenne (taulut, sarakkeet)
-* Mahdollinen skeemakaavio
+* Database technology used (e.g., Room)
+* Structure of the database (tables, columns)
+* Optional: database schema diagram
 
-#### 5. Päätoiminnot (features)
+### 5. Core Features
 
-* Mitä käyttäjä voi tehdä?
+* What can the user do?
 
-  * Esim. "Käyttäjä voi lisätä uuden sanan painamalla 'Lisää' -painiketta"
-* Mitä tapahtuu taustalla?
+  * Example: "The user can add a new word by tapping the 'Add' button"
+* What happens in the background?
 
-  * View kutsuu ViewModelia → ViewModel päivittää Repositorya → Repository tekee työn DAO\:n kautta
+  * View calls ViewModel → ViewModel updates Repository → Repository uses DAO
 
-#### 6. Näyttöjen toiminta
+### 6. Screens Overview
 
-* Lyhyet kuvaukset eri näytöistä
+* Short description of each screen
 
-  * Mikä komponentti vastaa mistäkin?
-  * Mitä muuttujia käytetään? (StateFlow, LiveData?)
-  * Miten navigointi tapahtuu?
+  * What does each component do?
+  * What state/data is used? (StateFlow, LiveData?)
+  * How does navigation work?
 
-#### 7. Käytetyt kirjastot
+### 7. External Libraries
 
-* Lista ulkopuolisista kirjastoista
+* List of third-party libraries used
 
-  * Esim. Room, kotlinx.coroutines, Material3
+  * Example: Room, kotlinx.coroutines, Material3
 
-#### 8. Testaus
+### 8. Testing
 
-* Onko sovelluksella yksikkötestejä? Miten testaus on järjestetty?
-* Esimerkki yhdestä testitapauksesta
+* Are there unit tests? How is testing organized?
+* Example test case
 
-#### 9. Tunnetut rajoitteet tai jatkokehitysideoita
+### 9. Known Limitations or Future Improvements
 
-* Mitä ominaisuuksia jäi puuttumaan tai voisi kehittää myöhemmin?
-
-
-
+* Features that were not implemented or ideas for future development
