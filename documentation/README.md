@@ -42,7 +42,6 @@ C:.
 │   └── screens
 │       ├── BTConnect.kt        // Screen for setting up Bluetooth connection
 │       ├── CanvasControls.kt   // Controls for the drawing canvas
-│       ├── Contacts.kt         // Screen for viewing or adding contacts
 │       ├── DrawingCanvas.kt    // Actual drawing area (Canvas)
 │       ├── DrawScreen.kt       // Screen where the drawer draws the given word
 │       ├── GameScreen.kt       // Main game screen during play
