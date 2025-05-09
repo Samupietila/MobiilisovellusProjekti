@@ -26,7 +26,21 @@ import androidx.compose.runtime.remember
 import com.example.mobiilisovellusprojekti.ViewModels.BleViewModel
 import com.example.mobiilisovellusprojekti.ui.theme.secondaryButtonColors
 
+/**
+ * UI components for controlling a canvas, including color selection and clearing the canvas.
+ */
 
+/**
+ * A composable function that renders the canvas control UI, allowing the user to select colors
+ * and clear the canvas. Integrates with a BLE view model for additional functionality.
+ *
+ * @param selectedColor The currently selected drawing color.
+ * @param colors A list of available drawing colors.
+ * @param onSelectColor A callback function invoked when a color is selected.
+ * @param onClearCanvas A callback function invoked to clear the canvas.
+ * @param modifier A [Modifier] to customize the layout.
+ * @param bleViewModel An instance of [BleViewModel] used for BLE-related actions.
+ */
 @Composable
 fun ColumnScope.CanvasControls(
     selectedColor: DrawingColor,
@@ -81,6 +95,14 @@ fun ColumnScope.CanvasControls(
         Text("Clear Canvas")
     }
 }
+
+/**
+ * A composable function that renders a single color item for selection. Displays the selected
+ * state with a border and treats eraser colors with a special background.
+ *
+ * @param drawingColor An instance of [DrawingColor] representing the color or eraser to display.
+ * @param isSelected A boolean value indicating whether this color is currently selected.
+ */
 
 @Composable
 fun DrawingColorItem(
