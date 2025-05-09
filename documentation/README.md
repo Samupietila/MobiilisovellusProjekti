@@ -104,10 +104,12 @@ C:.
 
 ### 7. External Libraries
 
-* Room – Local storage
-* Jetpack Compose – UI
-* kotlinx.coroutines – Async operations
-* Kotlin-BLE – Bluetooth communication
+* Jetpack Compose – Modern declarative UI framework (includes Material 3, Navigation, Tooling)
+* Room – Local database storage (Room Runtime, KTX, Compiler)
+* Lifecycle & ViewModel – State management and lifecycle support (LiveData, ViewModel Compose, Runtime KTX)
+* Kotlinx Coroutines – Asynchronous operations
+* JUnit & Espresso – Unit and UI testing
+* Kotlin-BLE (Nordic Semiconductor) – Bluetooth Low Energy communication (Client, Server, Scanner, Advertiser)
 
 ### 8. Testing
 
