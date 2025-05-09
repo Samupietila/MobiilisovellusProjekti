@@ -42,11 +42,9 @@ class BleViewModel : ViewModel() {
         val SERVICE_UUID = UUID.fromString("b7ceba11-2542-477f-a2a3-f8012d6ce13c")
 
 
-        // Messages
-        // Characteristic UUID = Where the data will be located at
+        // Characteristic UUID = Where the messages will be located at
         val CHARACTERISTIC_UUID: UUID = UUID.fromString("9c0cd23f-44c1-4d3d-aaa3-7678bf19a218")
 
-        // Canvas
         // Coordinates UUID to where the canvas coordinates will be placed
         val COORDINATES_UUID: UUID = UUID.fromString("ba598b1a-2458-48fb-ae8d-ed71b4760cdf")
     }
