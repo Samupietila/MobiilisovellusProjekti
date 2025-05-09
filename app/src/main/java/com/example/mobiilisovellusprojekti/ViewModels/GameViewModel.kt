@@ -17,6 +17,9 @@ class GameViewModel: ViewModel() {
     private val _gameOver = MutableStateFlow(false)
     val gameOver: StateFlow<Boolean> get() = _gameOver
 
+    /**
+     * Sets the game over state.
+     */
     fun setGameOver(value: Boolean) {
         if (_gameOver.value != value) {
             _gameOver.value = value
