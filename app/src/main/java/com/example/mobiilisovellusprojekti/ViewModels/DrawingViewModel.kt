@@ -105,7 +105,7 @@ class DrawingViewModel : ViewModel(){
                 paths = it.paths + currentPathData
             )
         }
-        //tähän send to server?
+        // Send Path to the server
         bleViewModel.sendCoordinatesToServer(
             _state.value,
             drawingViewModel = this,
@@ -114,7 +114,7 @@ class DrawingViewModel : ViewModel(){
 
     }
 
-    //testaamiseen ilman bluetoothia tarkoitettu
+    // Update the paths
     fun updatePaths(newPaths: PathData) {
         Log.d("DWM", "updatePaths triggered")
         Log.d("DWM",newPaths.toString())

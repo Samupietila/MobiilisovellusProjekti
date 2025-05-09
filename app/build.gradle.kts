@@ -1,9 +1,12 @@
+import java.net.URL
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     kotlin("plugin.serialization") version "2.0.0"
+    id("org.jetbrains.dokka") version "2.0.0"
 }
 
 android {
@@ -94,4 +97,22 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("com.google.truth:truth:1.4.2")
     testImplementation("androidx.test.ext:junit:1.1.5")
+}
+
+
+tasks.dokkaHtml {
+    dokkaSourceSets {
+        configureEach {
+            // Suppress unnecessary source sets
+            if (name.contains("androidTest", ignoreCase = true) || name.contains("release", ignoreCase = true)) {
+                suppress.set(true)
+            }
+
+            // Configure external documentation link
+            externalDocumentationLink {
+                url.set(URL("https://docs.oracle.com/javase/8/docs/api/"))
+                packageListUrl.set(URL("https://docs.oracle.com/javase/8/docs/api/element-list"))
+            }
+        }
+    }
 }
