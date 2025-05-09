@@ -75,7 +75,6 @@ C:.
 
 * Room is used for local storage.
 * Data includes words to draw.
-* One or more tables used for managing word list and game history.
 
 ### 5. Core Features
 
