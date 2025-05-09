@@ -32,10 +32,12 @@ class GameViewModel: ViewModel() {
      * Publicly exposed state of the game over status as a [StateFlow].
      */
     val gameOver: StateFlow<Boolean> get() = _gameOver
+
     /**
      * Updates the game over status.
      *
      * @param value The new game over state.
+
      */
     fun setGameOver(value: Boolean) {
         if (_gameOver.value != value) {

@@ -54,6 +54,10 @@ class BleViewModel : ViewModel() {
     // To enable Host
     private lateinit var chatBleServer: ChatBleServer
 
+    /**
+     * Initializes the ChatBleServer instance.
+     */
+
     fun initializeChatBleServer(context: Context) {
         chatBleServer = ChatBleServer(context, viewModelScope)
     }
@@ -67,7 +71,6 @@ class BleViewModel : ViewModel() {
     private var _characteristic: ClientBleGattCharacteristic? = null
     val connectionCharasteristic: ClientBleGattCharacteristic?
         get() = _characteristic
-
 
     // Coordinates Charasteristic
     private var _coordCharasteristic: ClientBleGattCharacteristic? = null
@@ -89,7 +92,13 @@ class BleViewModel : ViewModel() {
     // Role of the device
     val isHost = mutableStateOf(false)
 
-    // Function used to start advertising
+    // Job for observing notifications
+    private var obvMessageJob: Job? = null
+    private var obvCoordinatesJob: Job? = null
+
+    /**
+     * Function used to start advertising
+     */
     fun startAdvertising(context: Context, chatViewModel: ChatViewModel, drawingViewModel: DrawingViewModel, gameViewModel: GameViewModel,onDeviceConnected: () -> Unit) {
         if (::chatBleServer.isInitialized) {
             chatBleServer.startServer(context, viewModelScope, chatViewModel,drawingViewModel,gameViewModel,onDeviceConnected)
@@ -101,7 +110,9 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    // Function used to start scanning for devices
+    /**
+     * Function used to start scanning for devices, if the permission is granted and results are saved into scanResults
+     */
     fun scanDevices(context: Context) {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Manifest.permission.BLUETOOTH_SCAN
@@ -137,7 +148,11 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    // Function used to connect to the device
+    /**
+     * Function used to connect to the ServerDevice, discover services and request MTU and save connection, characteristic and coordinates into _connection, _characteristic and _coordCharasteristic
+     * @param context The context of the application.
+     * @param device The ServerDevice to connect to.
+     */
     suspend fun connectToDevice(context: Context, device: ServerDevice): Boolean {
         try {
             val connection = ClientBleGatt.connect(context, device.address, viewModelScope)
@@ -174,9 +189,13 @@ class BleViewModel : ViewModel() {
         return true
     }
 
-    private var obvMessageJob: Job? = null
-
-    // Function used to observe the notifications
+    /**
+     * Observes notifications from the connection characteristic and processes incoming messages.
+     * @param context The context of the application.
+     * @param chatViewModel The ChatViewModel instance to update chat messages.
+     * @param gameViewModel The GameViewModel instance to update game state.
+     * @param drawingViewModel The DrawingViewModel instance to handle drawing actions.
+     */
     fun observeChatNotifications(context: Context,
                                  chatViewModel: ChatViewModel,
                                  gameViewModel: GameViewModel,
@@ -234,9 +253,11 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    private var obvCoordinatesJob: Job? = null
-
-    // Function used to observe the coordinates
+    /**
+     * Enables observation of notifications from the coordinate characteristic and processes incoming coordinates.
+     * @param context The context of the application.
+     * @param drawingViewModel The DrawingViewModel instance to update drawing paths.
+     */
     fun observeCordinateNotifications(context: Context, drawingViewModel: DrawingViewModel) {
         val characteristic = coordinateCharasteristic
         if (characteristic != null) {
@@ -285,7 +306,11 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    // Function used to send messages to the server
+    /**
+     * Sends a message to the server or the host device based on the role of the device.
+     * @param message The message to be sent.
+     * @param chatViewModel The ChatViewModel instance to update chat messages.
+     */
     fun sendMessage(message: String, chatViewModel: ChatViewModel) {
 
         if (isHost.value == true) {
@@ -330,7 +355,11 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    // Function used to send coordinates to the server
+    /**
+     * Sends the coordinates to the server or the host device based on the role of the device.
+     * @param drawingState The current state of the drawing.
+     * @param drawingViewModel The DrawingViewModel instance to handle drawing actions, and serialization.
+     */
     fun sendCoordinatesToServer( drawingState: DrawingState, drawingViewModel: DrawingViewModel) {
 
         if (isHost.value == true) {
@@ -340,7 +369,6 @@ class BleViewModel : ViewModel() {
                 viewModelScope = viewModelScope,
                 drawingViewModel = drawingViewModel
             )
-
         } else {
             Log.d("sendCoordinatesToServer", "Sending coordinates to server")
             val characteristic = coordinateCharasteristic
@@ -383,7 +411,9 @@ class BleViewModel : ViewModel() {
         }
     }
 
-    // Function used to clear the canvas
+    /**
+     * Sends a clear canvas message to trigger the canvas clearing action on the host or client device based on the role of the device.
+     */
     fun clearCanvas() {
         if (isHost.value == true) {
             chatBleServer.sendMessage("CLEAR_CANVAS", viewModelScope)
@@ -392,13 +422,16 @@ class BleViewModel : ViewModel() {
         }
     }
 
-
-    // Clears the scanResults list
+    /**
+     * Clears the scanned devices list.
+     */
     fun clearScannedDevices() {
         scanResults.postValue(emptyList())
     }
 
-    // Function used to reset the viewModel
+    /**
+     * Resets the BLE ViewModel by disconnecting from all devices, stopping the server, and clearing the state.
+     */
     fun resetBleViewModel() {
         if (::chatBleServer.isInitialized) {
             chatBleServer.disconnectAllDevices()
@@ -407,9 +440,7 @@ class BleViewModel : ViewModel() {
 
         obvMessageJob?.cancel()
         obvCoordinatesJob?.cancel()
-
         Log.d("RESET","Resetting BLE ViewModel")
-
         _connection = null
         _characteristic = null
         _coordCharasteristic = null
@@ -419,7 +450,4 @@ class BleViewModel : ViewModel() {
         isScanning.postValue(false)
         isAdvertising.postValue(false)
     }
-
-
-
 }
