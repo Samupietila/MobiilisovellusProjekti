@@ -138,10 +138,6 @@ flowchart TD
 
     H --> I[End Screen]
     I --> A[Back to Home]
-
-    subgraph Optional Features
-        J[History Screen] --> A
-        K[Statistics Screen] --> A
-    end
 ```
+
 
