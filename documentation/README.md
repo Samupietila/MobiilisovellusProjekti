@@ -4,7 +4,7 @@
 
 * Purpose of the application
 
-  * *Guess My Doodle* is a multiplayer Android app where one player draws a randomly generated word and the other tries to guess it. The goal is to provide a fun and collaborative experience using creative drawing and Bluetooth-based interaction.
+* *Guess My Doodle is a two-player Android game where one player draws a randomly generated word, and the other tries to guess it. The game is designed to offer a fun and collaborative experience through creative drawing and real-time Bluetooth communication between two nearby devices.
 * Target audience
 
   * Android users interested in casual, creative multiplayer games.
