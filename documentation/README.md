@@ -119,3 +119,29 @@ C:.
 * No score or game history tracking yet
 * Roadmap includes support for statistics, multiplayer extensions, and friend invitations
 * Limited to Android devices with Bluetooth and Android 13+
+
+### 10. Flowchart
+
+```mermaid
+flowchart TD
+    A[Home Screen] --> B{Choose Role}
+    B -->|Drawer| C[Draw Screen]
+    B -->|Guesser| D[Guess Screen]
+    A --> E[Bluetooth Connection]
+    E --> B
+
+    C --> F[Waiting for Guess]
+    D --> G[Submit Guess]
+
+    F --> H[Result Screen]
+    G --> H
+
+    H --> I[End Screen]
+    I --> A[Back to Home]
+
+    subgraph Optional Features
+        J[History Screen] --> A
+        K[Statistics Screen] --> A
+    end
+```
+
