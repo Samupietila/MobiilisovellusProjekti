@@ -27,7 +27,6 @@
 C:.
 ├── MainActivity.kt
 ├── Permissions.kt
-├── project_structure.txt
 
 ├── data
 │   ├── DefaultWords.kt
