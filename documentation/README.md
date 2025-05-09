@@ -22,52 +22,55 @@
 
 * Overview of key folders and files
 
-  ```
-  C:.
+
+```
+C:.
 ├── MainActivity.kt
 ├── Permissions.kt
+├── project_structure.txt
 
 ├── data
-│ ├── DefaultWords.kt
-│ ├── Word.kt
-│ ├── WordDao.kt
-│ ├── WordDatabase.kt
-│ └── WordRepository.kt
+│   ├── DefaultWords.kt
+│   ├── Word.kt
+│   ├── WordDao.kt
+│   ├── WordDatabase.kt
+│   └── WordRepository.kt
 
 ├── screens
-│ ├── navigation
-│ │ └── Navigation.kt
-│ └── screens
-│ ├── BTConnect.kt
-│ ├── CanvasControls.kt
-│ ├── Contacts.kt
-│ ├── DrawingCanvas.kt
-│ ├── DrawScreen.kt
-│ ├── GameScreen.kt
-│ ├── GuessScreen.kt
-│ ├── History.kt
-│ ├── Home.kt
-│ ├── NewProfile.kt
-│ ├── Player.kt
-│ ├── Statistics.kt
-│ ├── Test.kt
-│ └── WordScreen.kt
+│   ├── navigation
+│   │   └── Navigation.kt
+│   └── screens
+│       ├── BTConnect.kt
+│       ├── CanvasControls.kt
+│       ├── Contacts.kt
+│       ├── DrawingCanvas.kt
+│       ├── DrawScreen.kt
+│       ├── GameScreen.kt
+│       ├── GuessScreen.kt
+│       ├── History.kt
+│       ├── Home.kt
+│       ├── NewProfile.kt
+│       ├── Player.kt
+│       ├── Statistics.kt
+│       ├── Test.kt
+│       └── WordScreen.kt
 
 ├── ui
-│ └── theme
-│ ├── ButtonStyles.kt
-│ ├── Color.kt
-│ ├── Theme.kt
-│ └── Type.kt
+│   └── theme
+│       ├── ButtonStyles.kt
+│       ├── Color.kt
+│       ├── Theme.kt
+│       └── Type.kt
 
 └── ViewModels
-├── BluetoothViewModel.kt
-├── ChatBleServer.kt
-├── ChatViewModel.kt
-├── DrawingViewModel.kt
-├── GameViewModel.kt
-└── WordViewModel.kt
-  ```
+    ├── BluetoothViewModel.kt
+    ├── ChatBleServer.kt
+    ├── ChatViewModel.kt
+    ├── DrawingViewModel.kt
+    ├── GameViewModel.kt
+    └── WordViewModel.kt
+```
+
 
 ### 4. Database
 
