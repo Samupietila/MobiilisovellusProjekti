@@ -49,9 +49,9 @@ C:.
 │       ├── GuessScreen.kt      // Screen where the guesser tries to guess the word
 │       ├── History.kt          // Screen for viewing past games (future feature)
 │       ├── Home.kt             // Start or main menu screen
-│       ├── NewProfile.kt       // Screen to create a new player profile
-│       ├── Player.kt           // Displays or manages player data
-│       ├── Statistics.kt       // Screen showing game stats and success rate
+│       ├── NewProfile.kt       // Screen to create a new player profile (future feature)
+│       ├── Player.kt           // Displays or manages player data (future feature)
+│       ├── Statistics.kt       // Screen showing game stats and success rate (future feature)
 │       ├── Test.kt             // Possible development/testing screen
 │       └── WordScreen.kt       // Manages or displays the list of words
 
