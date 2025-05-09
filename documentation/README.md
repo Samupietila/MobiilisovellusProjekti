@@ -57,10 +57,10 @@ C:.
 
 ├── ui
 │   └── theme
-│       ├── ButtonStyles.kt     // Custom styles for buttons
-│       ├── Color.kt            // App color palette
-│       ├── Theme.kt            // Material3 theme configuration
-│       └── Type.kt             // Typography settings (fonts and styles)
+│       ├── ButtonStyles.kt     // Custom Material3 button color styles (primary, secondary, outlined)
+│       ├── Color.kt          
+│       ├── Theme.kt            // Main Material3 theme setup, including color scheme and typography
+│       └── Type.kt             
 
 └── ViewModels                  // ViewModels following MVVM architecture
     ├── BluetoothViewModel.kt   // Manages Bluetooth state and logic
