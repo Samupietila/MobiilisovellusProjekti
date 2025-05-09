@@ -38,6 +38,13 @@ data class AdvertisingState(
     val isAdvertising: Boolean
 )
 
+/**
+ * This class is responsible for managing the Bluetooth Low Energy (BLE) server functionality.
+ * It handles advertising, connection events, and data transfer between devices.
+ *
+ * @param context The application context.
+ * @param coroutineScope The coroutine scope for launching coroutines.
+ */
 class ChatBleServer(
     private val context: Context,
     private val coroutineScope: CoroutineScope
@@ -62,7 +69,12 @@ class ChatBleServer(
         )
     )
 
-    // Function that will be used to declare the server and all services that belong inside of it
+    /**
+     * Declares a BLE server with the specified characteristics and service configuration.
+     * @param context The application context.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     * @param onServerCreated Callback function to be called when the server is created.
+     */
     fun declareServer(
         context: Context,
         viewModelScope: CoroutineScope,
@@ -70,7 +82,10 @@ class ChatBleServer(
     ) {
         viewModelScope.launch {
 
-            // Setting up the permissions and properties for the message characteristic (Including UUID)
+            /**
+             * The message characteristic is used for sending and receiving messages between devices.
+             * It has read, write, and notify properties, allowing the server to send notifications to clients.
+             */
             val messageCharasteristics = ServerBleGattCharacteristicConfig(
                 BleViewModel.CHARACTERISTIC_UUID,
                 listOf(
@@ -82,7 +97,10 @@ class ChatBleServer(
                     BleGattPermission.PERMISSION_WRITE)
             )
 
-            // Setting up the permissions and properties for the coordinate characteristic (Including UUID)
+            /**
+             * The coordinates characteristic is used for sending and receiving coordinates between devices.
+             * It has read, write, and notify properties, allowing the server to send notifications to clients.
+             */
             val coordinatesCharasteristics = ServerBleGattCharacteristicConfig(
                 BleViewModel.COORDINATES_UUID,
                 listOf(
@@ -94,7 +112,10 @@ class ChatBleServer(
                     BleGattPermission.PERMISSION_WRITE)
             )
 
-            // Setting up the server with the service and characteristics and it's own UUID
+            /**
+             * The server is created with a primary service that includes the message and coordinates characteristics.
+             * The service UUID is used to identify the service on the server.
+             */
             val serverConfig = ServerBleGattServiceConfig(
                 BleViewModel.SERVICE_UUID,
                 ServerBleGattServiceType.SERVICE_TYPE_PRIMARY,
@@ -106,7 +127,16 @@ class ChatBleServer(
         }
     }
 
-    // This function will be used to set up how each of the characteristic service will behave
+    /**
+     * Sets up the services for the connected devices.
+     * It handles the message and coordinates characteristics, processing incoming data and updating the UI.
+     *
+     * @param services The server GATT service to set up.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     * @param chatViewModel The chat view model for handling chat messages.
+     * @param drawingViewModel The drawing view model for handling drawing actions.
+     * @param gameViewModel The game view model for handling game state.
+     */
     fun setUpServices(services: ServerBleGattService,
                       viewModelScope: CoroutineScope,
                       chatViewModel: ChatViewModel,
@@ -192,6 +222,9 @@ class ChatBleServer(
 
     }
 
+    /**
+     * Disconnects all connected devices.
+     */
     fun disconnectAllDevices() {
         try {
             _connectedDevices.forEach { device ->
@@ -205,6 +238,16 @@ class ChatBleServer(
         }
     }
 
+    /**
+     * Observes the connection events from the server and sets up services for connected devices.
+     *
+     * @param server The server instance to observe.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     * @param chatViewModel The chat view model for handling chat messages.
+     * @param drawingViewModel The drawing view model for handling drawing actions.
+     * @param gameViewModel The game view model for handling game state.
+     * @param onDeviceConnected Callback function to be called when a device is connected.
+     */
     fun observeConnections(server: ServerBleGatt,
                            viewModelScope: CoroutineScope,
                            chatViewModel: ChatViewModel,
@@ -225,7 +268,10 @@ class ChatBleServer(
             }.launchIn(viewModelScope)
     }
 
-    // Function to start advertising
+    /**
+     * Starts advertising the BLE server.
+     * It checks for required permissions and starts the advertising process.
+     */
     fun startAdvertising() {
 
         // Checking if the device has Bluetooth permissions
@@ -258,7 +304,10 @@ class ChatBleServer(
 
     }
 
-    // Function to handle the advertising process
+    /**
+     * Starts the advertising process and collects the advertising events.
+     * It updates the state based on the advertising events.
+     */
     private fun startAdvertisingProcess(){
         try {
             Log.d("ChatBleServer", "Starting Advertiser")
@@ -295,7 +344,17 @@ class ChatBleServer(
         }
     }
 
-    // Function needed to start the server
+    /**
+     * Starts the BLE server and observes the connection events.
+     * It sets up the server and handles incoming connections.
+     *
+     * @param context The application context.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     * @param chatViewModel The chat view model for handling chat messages.
+     * @param drawingViewModel The drawing view model for handling drawing actions.
+     * @param gameViewModel The game view model for handling game state.
+     * @param onDeviceConnected Callback function to be called when a device is connected.
+     */
     fun startServer(context: Context,
                     viewModelScope: CoroutineScope,
                     chatViewModel: ChatViewModel,
@@ -314,7 +373,14 @@ class ChatBleServer(
         }
     }
 
-    // When the host of the game is sending coordinates
+    /**
+     * Sends the coordinates to the connected devices.
+     * It chunks the data and sends it to each connected device.
+     *
+     * @param drawingState The current drawing state containing the paths.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     * @param drawingViewModel The drawing view model for handling drawing actions.
+     */
     fun sendCoordinates(drawingState: DrawingState,
                         viewModelScope: CoroutineScope,
                         drawingViewModel: DrawingViewModel) {
@@ -369,8 +435,13 @@ class ChatBleServer(
         }
     }
 
-
-    // When the host of the game is sending messages
+    /**
+     * Sends a message to the connected devices.
+     * It chunks the data and sends it to each connected device.
+     *
+     * @param message The message to be sent.
+     * @param viewModelScope The coroutine scope for launching coroutines.
+     */
     fun sendMessage(message: String, viewModelScope: CoroutineScope) {
         val connectedDevices = _connectedDevices // List of connected devices
         if (connectedDevices.isEmpty()) {
@@ -418,10 +489,13 @@ class ChatBleServer(
         }
     }
 
+    /**
+     * Stops the BLE server and clears the connected devices list.
+     * It updates the state to indicate that advertising has stopped.
+     */
     fun stopServer() {
         advertiser = BleAdvertiser.create(context)
         _connectedDevices.clear()
         _state.value = AdvertisingState(isAdvertising = false)
     }
-
 }
