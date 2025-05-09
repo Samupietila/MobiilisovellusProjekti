@@ -1,66 +1,83 @@
-## 📱 Technical Documentation – *\[App Name]*
+## Technical Documentation – *Guess My Doodle*
 
 ### 1. Introduction
 
 * Purpose of the application
+
+  * *Guess My Doodle* is a multiplayer Android app where one player draws a randomly generated word and the other tries to guess it. The goal is to provide a fun and collaborative experience using creative drawing and Bluetooth-based interaction.
 * Target audience
+
+  * Android users interested in casual, creative multiplayer games.
 * Brief description of the main features
+
+  * Drawing with touch, guessing the word, Bluetooth peer-to-peer connection, and real-time interaction.
 
 ### 2. Architecture and Structure
 
-* Architecture used (e.g., MVVM, MVC)
-* How the components communicate (e.g., ViewModel ⇔ Repository ⇔ Room)
-* Programming languages and tools used (e.g., Kotlin, Jetpack Compose, Room)
+* Architecture used: MVVM (Model-View-ViewModel)
+* Components communicate via ViewModel (state management), Bluetooth communication layer, and local Room database.
+* Technologies: Kotlin, Jetpack Compose, Room, Bluetooth BLE, Coroutines
 
 ### 3. Project Structure
 
 * Overview of key folders and files
 
   ```
-  /data
-    └── entity/Word.kt          // Database entity for a word
-    └── dao/WordDao.kt          // Interface for database queries
-    └── repository/WordRepository.kt
-  /ui
-    └── screens/WordScreen.kt   // Displays a list of words
-  /viewmodels
-    └── WordViewModel.kt
+  /app
+    └── src/main/
+        └── java/
+            └── com/example/mobiilisovellusprojekti
+                └── ble/               // BLE communication logic
+                └── ui/                // Jetpack Compose screens
+                └── viewmodel/         // ViewModel classes
+                └── data/              // Room database and models
   ```
 
 ### 4. Database
 
-* Database technology used (e.g., Room)
-* Structure of the database (tables, columns)
-* Optional: database schema diagram
+* Room is used for local storage.
+* Data includes words to draw and possibly saved games (future roadmap).
+* One or more tables used for managing word list and game history.
 
 ### 5. Core Features
 
 * What can the user do?
 
-  * Example: "The user can add a new word by tapping the 'Add' button"
+  * Draw using the touchscreen
+  * Guess words
+  * Connect via Bluetooth
+  * Experience real-time multiplayer gameplay
 * What happens in the background?
 
-  * View calls ViewModel → ViewModel updates Repository → Repository uses DAO
+  * View observes ViewModel state
+  * ViewModel handles game logic and state
+  * BLE layer transmits data between players
+  * Room may be used for persisting data (e.g., words)
 
 ### 6. Screens Overview
 
-* Short description of each screen
-
-  * What does each component do?
-  * What state/data is used? (StateFlow, LiveData?)
-  * How does navigation work?
+* Home Screen – Choose to host or join a game
+* Find Screen – Discover nearby Bluetooth devices
+* Draw Screen – One player draws the given word
+* Guess Screen – Second player guesses the word
+* End Screen – Show results and options to restart
 
 ### 7. External Libraries
 
-* List of third-party libraries used
-
-  * Example: Room, kotlinx.coroutines, Material3
+* Room – Local storage
+* Jetpack Compose – UI
+* kotlinx.coroutines – Async operations
+* Kotlin-BLE – Bluetooth communication
 
 ### 8. Testing
 
-* Are there unit tests? How is testing organized?
-* Example test case
+* Manual testing with two physical Android devices (required for Bluetooth functionality)
+* Basic functional testing to verify game flow (e.g., draw → guess → result)
+* No unit tests included in current MVP
 
 ### 9. Known Limitations or Future Improvements
 
-* Features that were not implemented or ideas for future development
+* No support yet for multiplayer with more than 2 players
+* No score or game history tracking yet
+* Roadmap includes support for statistics, multiplayer extensions, and friend invitations
+* Limited to Android devices with Bluetooth and Android 13+
