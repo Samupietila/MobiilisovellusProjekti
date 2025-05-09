@@ -113,7 +113,6 @@ C:.
 
 * Manual testing with two physical Android devices (required for Bluetooth functionality)
 * Basic functional testing to verify game flow (e.g., draw → guess → result)
-* No unit tests included in current MVP
 
 ### 9. Known Limitations or Future Improvements
 
