@@ -17,6 +17,7 @@
 * Architecture used: MVVM (Model-View-ViewModel)
 * Components communicate via ViewModel (state management), Bluetooth communication layer, and local Room database.
 * Technologies: Kotlin, Jetpack Compose, Room, Bluetooth BLE, Coroutines
+* Flowchart [Flowchart](documentation/Flowchart GuessMyDoodle.pdf)
 
 ### 3. Project Structure
 
