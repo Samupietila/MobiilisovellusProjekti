@@ -23,52 +23,54 @@
 * Overview of key folders and files
 
 
-```
+```plaintext
 C:.
-├── MainActivity.kt
-├── Permissions.kt
+├── MainActivity.kt              // Entry point of the app, main activity
+├── Permissions.kt              // Handles Bluetooth and other permission requests
+├── project_structure.txt       // Printed directory structure for documentation
 
-├── data
-│   ├── DefaultWords.kt
-│   ├── Word.kt
-│   ├── WordDao.kt
-│   ├── WordDatabase.kt
-│   └── WordRepository.kt
+├── data                        // Data model and Room database components
+│   ├── DefaultWords.kt         // List of default words to be drawn
+│   ├── Word.kt                 // Word entity used by Room database
+│   ├── WordDao.kt              // DAO interface for accessing and storing words
+│   ├── WordDatabase.kt         // Defines the Room database
+│   └── WordRepository.kt       // Repository layer between database and ViewModel
 
-├── screens
+├── screens                     // UI screens and game logic
 │   ├── navigation
-│   │   └── Navigation.kt
+│   │   └── Navigation.kt       // Navigation setup between different screens
 │   └── screens
-│       ├── BTConnect.kt
-│       ├── CanvasControls.kt
-│       ├── Contacts.kt
-│       ├── DrawingCanvas.kt
-│       ├── DrawScreen.kt
-│       ├── GameScreen.kt
-│       ├── GuessScreen.kt
-│       ├── History.kt
-│       ├── Home.kt
-│       ├── NewProfile.kt
-│       ├── Player.kt
-│       ├── Statistics.kt
-│       ├── Test.kt
-│       └── WordScreen.kt
+│       ├── BTConnect.kt        // Screen for setting up Bluetooth connection
+│       ├── CanvasControls.kt   // Controls for the drawing canvas
+│       ├── Contacts.kt         // Screen for viewing or adding contacts
+│       ├── DrawingCanvas.kt    // Actual drawing area (Canvas)
+│       ├── DrawScreen.kt       // Screen where the drawer draws the given word
+│       ├── GameScreen.kt       // Main game screen during play
+│       ├── GuessScreen.kt      // Screen where the guesser tries to guess the word
+│       ├── History.kt          // Screen for viewing past games (future feature)
+│       ├── Home.kt             // Start or main menu screen
+│       ├── NewProfile.kt       // Screen to create a new player profile
+│       ├── Player.kt           // Displays or manages player data
+│       ├── Statistics.kt       // Screen showing game stats and success rate
+│       ├── Test.kt             // Possible development/testing screen
+│       └── WordScreen.kt       // Manages or displays the list of words
 
 ├── ui
 │   └── theme
-│       ├── ButtonStyles.kt
-│       ├── Color.kt
-│       ├── Theme.kt
-│       └── Type.kt
+│       ├── ButtonStyles.kt     // Custom styles for buttons
+│       ├── Color.kt            // App color palette
+│       ├── Theme.kt            // Material3 theme configuration
+│       └── Type.kt             // Typography settings (fonts and styles)
 
-└── ViewModels
-    ├── BluetoothViewModel.kt
-    ├── ChatBleServer.kt
-    ├── ChatViewModel.kt
-    ├── DrawingViewModel.kt
-    ├── GameViewModel.kt
-    └── WordViewModel.kt
+└── ViewModels                  // ViewModels following MVVM architecture
+    ├── BluetoothViewModel.kt   // Manages Bluetooth state and logic
+    ├── ChatBleServer.kt        // BLE server handling connections and messaging
+    ├── ChatViewModel.kt        // ViewModel for chat and messaging logic
+    ├── DrawingViewModel.kt     // Manages state for drawing interactions
+    ├── GameViewModel.kt        // Controls game logic and state transitions
+    └── WordViewModel.kt        // Handles state related to word management
 ```
+
 
 
 ### 4. Database
